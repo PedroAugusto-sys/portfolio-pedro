@@ -204,18 +204,18 @@ const Projects = () => {
     <section
       id="projects"
       ref={elementRef}
-      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 via-purple-950/20 to-gray-900"
+      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(120,119,198,0.08),rgba(0,0,0,0))]" />
+      <div className="absolute inset-0 bg-gradient-radial from-purple-500/5 via-transparent to-transparent" />
       
       <div className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Projetos <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">em Destaque</span>
+            Projetos <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">em Destaque</span>
           </h2>
-          <div className="h-1 w-32 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full mx-auto mb-6" />
+          <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full mx-auto mb-6" />
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-            Seleção dos meus trabalhos mais impactantes em <strong className="text-purple-300">QA Automation</strong>, <strong className="text-teal-300">SDET</strong> e desenvolvimento full stack
+            Seleção dos meus trabalhos mais impactantes em <strong className="text-cyan-300">QA Automation</strong>, <strong className="text-blue-300">SDET</strong> e desenvolvimento full stack
           </p>
         </div>
 
@@ -238,9 +238,9 @@ const Projects = () => {
           <>
             <div className="text-center mb-12">
               <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Outros <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Projetos</span>
+                Outros <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Projetos</span>
               </h3>
-              <div className="h-1 w-24 bg-gradient-to-r from-purple-500/50 to-teal-500/50 rounded-full mx-auto mb-4" />
+              <div className="h-1 w-24 bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-purple-500/50 rounded-full mx-auto mb-4" />
               <p className="text-gray-400 text-sm sm:text-base">
                 Projetos adicionais e experimentais
               </p>

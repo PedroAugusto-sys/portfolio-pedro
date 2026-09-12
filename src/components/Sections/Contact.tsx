@@ -144,14 +144,14 @@ const Contact = () => {
     <section
       id="contact"
       ref={elementRef}
-      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 overflow-visible bg-gradient-to-b from-gray-900 via-purple-950/20 to-gray-950"
+      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 overflow-visible"
     >
       <div ref={contentRef} className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Entre em <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Contato</span>
+            Entre em <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Contato</span>
           </h2>
-          <div className="h-1 w-32 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full mx-auto mb-6" />
+          <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full mx-auto mb-6" />
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
             Estou sempre aberto para novas oportunidades e conversas sobre projetos interessantes
           </p>
@@ -164,14 +164,14 @@ const Contact = () => {
               href={contact.href}
               target={contact.id !== 'email' ? '_blank' : undefined}
               rel={contact.id !== 'email' ? 'noopener noreferrer' : undefined}
-              className="contact-card group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 sm:p-8 hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              className="contact-card group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-6 sm:p-8 hover:border-cyan-500/60 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
             >
               <div className="flex flex-col items-center text-center space-y-4">
-                <div className="contact-icon text-purple-400 group-hover:text-teal-300 transition-colors duration-300">
+                <div className="contact-icon text-cyan-400 group-hover:text-blue-300 transition-colors duration-300">
                   {contact.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-300 group-hover:to-teal-300 group-hover:bg-clip-text transition-all">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text transition-all">
                     {contact.label}
                   </h3>
                   <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors break-all">
@@ -180,14 +180,14 @@ const Contact = () => {
                 </div>
               </div>
               
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-teal-500/10 blur-xl" />
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-purple-500/10 blur-xl" />
             </a>
           ))}
         </div>
 
-        <footer className="text-center border-t border-purple-500/10 pt-8">
+        <footer className="text-center border-t border-cyan-500/10 pt-8">
           <p className="text-gray-400 text-sm">
-            © 2026 <span className="text-purple-300 font-medium">Pedro Augusto Santos Andrade</span>. Todos os direitos reservados.
+            © 2026 <span className="text-cyan-300 font-medium">Pedro Augusto Santos Andrade</span>. Todos os direitos reservados.
           </p>
           <p className="text-gray-500 text-xs mt-2">
             Desenvolvido com React, TypeScript, Three.js, GSAP e Tailwind CSS
@@ -195,8 +195,8 @@ const Contact = () => {
         </footer>
 
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
       </div>
     </section>

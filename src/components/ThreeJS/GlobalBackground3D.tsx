@@ -1,11 +1,11 @@
 import Scene3D from './Scene3D'
-import Background3D from './Background3D'
+import LuminousBackground3D from './LuminousBackground3D'
 
 const GlobalBackground3D = () => {
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none opacity-30">
+    <div className="fixed inset-0 -z-10 pointer-events-none">
       <Scene3D enableControls={false} className="w-full h-full">
-        <Background3D />
+        <LuminousBackground3D />
       </Scene3D>
     </div>
   )
