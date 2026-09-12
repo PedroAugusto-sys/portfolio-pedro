@@ -164,7 +164,6 @@ const Projects = () => {
           rotationY: index % 2 === 0 ? -10 : 10
         })
         
-        // Animação de entrada com efeito 3D
         gsap.to(card, {
           opacity: 1,
           y: 0,
@@ -182,7 +181,6 @@ const Projects = () => {
           },
         })
 
-        // Animação parallax no scroll
         gsap.to(card, {
           y: -30,
           duration: 1,
@@ -206,19 +204,22 @@ const Projects = () => {
     <section
       id="projects"
       ref={elementRef}
-      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-gray-950 to-black"
+      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 via-purple-950/20 to-gray-900"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(120,119,198,0.08),rgba(0,0,0,0))]" />
+      
+      <div className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Projetos <span className="text-primary-400">em Destaque</span>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+            Projetos <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">em Destaque</span>
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
-            Seleção dos meus trabalhos mais impactantes em QA e desenvolvimento
+          <div className="h-1 w-32 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full mx-auto mb-6" />
+          <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
+            Seleção dos meus trabalhos mais impactantes em <strong className="text-purple-300">QA Automation</strong>, <strong className="text-teal-300">SDET</strong> e desenvolvimento full stack
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-20 items-stretch">
+        <div className="grid md:grid-cols-2 gap-8 mb-24 items-stretch">
           {featuredProjects.map((project) => (
             <div key={project.id} className="project-card h-full flex">
               <ProjectCard
@@ -236,10 +237,11 @@ const Projects = () => {
         {otherProjects.length > 0 && (
           <>
             <div className="text-center mb-12">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                Outros <span className="text-primary-400">Projetos</span>
+              <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                Outros <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Projetos</span>
               </h3>
-              <p className="text-gray-500 text-sm sm:text-base">
+              <div className="h-1 w-24 bg-gradient-to-r from-purple-500/50 to-teal-500/50 rounded-full mx-auto mb-4" />
+              <p className="text-gray-400 text-sm sm:text-base">
                 Projetos adicionais e experimentais
               </p>
             </div>
