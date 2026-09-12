@@ -145,21 +145,36 @@ const Achievements = () => {
     {
       id: 1,
       title: 'Bacharel em Engenharia de Software',
-      description: 'Uma jornada transformadora que me preparou para criar soluções tecnológicas inovadoras. Durante toda a formação, desenvolvi habilidades técnicas sólidas em desenvolvimento de software, arquitetura de sistemas e gestão de projetos. Aprendi a transformar ideias em código, resolver problemas complexos e trabalhar em equipe para entregar produtos de alta qualidade. Esta formação não foi apenas sobre aprender tecnologias, mas sobre desenvolver uma mentalidade de engenharia que me permite enfrentar qualquer desafio com confiança e criatividade.',
+      description: 'Formação completa em desenvolvimento de software, arquitetura de sistemas e gestão de projetos. Desenvolvendo soluções tecnológicas com qualidade e inovação.',
       year: '2025',
     },
     {
       id: 2,
-      title: 'Promoção para Analista QA Sênior',
-      description: 'Promoção para Analista QA Sênior na Escolar Manager, assumindo responsabilidades estratégicas em projetos de automação e desenvolvimento de aplicações úteis para diversos setores da empresa. Este marco representa não apenas um reconhecimento do meu trabalho e dedicação, mas também uma oportunidade de impactar positivamente a qualidade dos produtos e processos organizacionais. A cada desafio superado, fortaleço minha paixão por criar soluções que fazem a diferença e demonstro que o crescimento profissional vem através da excelência, inovação e comprometimento constante.',
+      title: 'Analista QA Sênior',
+      description: 'Promoção na Escolar Manager assumindo responsabilidades estratégicas em automação de testes e desenvolvimento de ferramentas internas para QA e outros setores.',
       year: '2023',
     },
     {
       id: 3,
       title: 'Início da Carreira',
-      description: 'Início da jornada profissional como Suporte Técnico Nível 3, onde tive a oportunidade de desenvolver habilidades fundamentais que moldaram minha trajetória. Nesta posição, aprendi a criar scripts em SQL para otimizar processos e resolver problemas complexos, desenvolvi excelência no atendimento ao cliente com foco em soluções eficientes, e compreendi a importância de cada interação para o sucesso do negócio. Este foi o momento em que descobri minha paixão por tecnologia e aprendi que cada desafio é uma oportunidade de crescimento. O início pode ser humilde, mas é onde plantamos as sementes da excelência que nos levam a conquistas maiores.',
+      description: 'Suporte Técnico Nível 3 desenvolvendo scripts SQL, otimizando processos e construindo base sólida em resolução de problemas técnicos.',
       year: '2022',
     },
+  ]
+
+  const skillGroups = [
+    {
+      title: 'Desenvolvimento',
+      skills: ['Java', 'TypeScript', 'Python', 'React', 'Spring Boot', 'Node.js']
+    },
+    {
+      title: 'QA & Automação',
+      skills: ['Selenium', 'Playwright', 'Test Automation', 'CI/CD', 'Jest']
+    },
+    {
+      title: 'Infraestrutura',
+      skills: ['PostgreSQL', 'MongoDB', 'Docker', 'Git', 'Linux']
+    }
   ]
 
   const stats = [
@@ -178,10 +193,10 @@ const Achievements = () => {
         {/* Título */}
         <div className="text-center mb-16 animate-on-scroll">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Conquistas e <span className="text-primary-400">Feitos</span>
+            Conquistas e <span className="text-primary-400">Marcos</span>
           </h2>
-          <p className="text-gray-400 text-base sm:text-lg">
-            Alguns dos meus principais marcos e realizações
+          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+            Principais conquistas profissionais e habilidades técnicas
           </p>
         </div>
 
@@ -258,8 +273,35 @@ const Achievements = () => {
           ))}
         </div>
 
+        {/* Skills agrupadas */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-bold text-white mb-8 text-center">
+            Habilidades <span className="text-primary-400">Técnicas</span>
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {skillGroups.map((group, index) => (
+              <div
+                key={index}
+                className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all"
+              >
+                <h4 className="text-lg font-semibold text-primary-400 mb-4">{group.title}</h4>
+                <div className="flex flex-wrap gap-2">
+                  {group.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3 py-1.5 bg-gray-800/50 border border-gray-700 text-gray-300 text-sm rounded-lg"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Objeto 3D Decorativo */}
-        <div className="h-64 md:h-96 animate-on-scroll">
+        <div className="h-64 md:h-96 animate-on-scroll mt-16">
           <Suspense fallback={<div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">Carregando 3D...</div>}>
             <Scene3D
               cameraPosition={[0, 0, 5]}

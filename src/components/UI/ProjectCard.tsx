@@ -16,8 +16,7 @@ const ProjectCard = ({
   preview,
 }: ProjectCardProps) => {
   return (
-    <div className="group relative bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex flex-col w-full">
-      {/* Imagem do projeto ou placeholder */}
+    <div className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-300 transform hover:scale-[1.02] flex flex-col w-full shadow-lg">
       <div className="aspect-video bg-gradient-to-br from-gray-800 via-gray-800/90 to-gray-900 relative overflow-hidden flex-shrink-0">
         {image ? (
           <img
@@ -52,12 +51,12 @@ const ProjectCard = ({
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 mb-4 flex-grow">{description}</p>
+        <p className="text-gray-300 mb-4 flex-grow leading-relaxed">{description}</p>
         <div className="flex flex-wrap gap-2 mb-4 flex-shrink-0">
           {technologies.map((tech) => (
             <span
               key={tech}
-              className="px-2 py-1 bg-primary-500/20 text-primary-400 text-xs rounded"
+              className="px-2.5 py-1 bg-primary-500/10 border border-primary-500/20 text-primary-400 text-xs rounded-md font-medium"
             >
               {tech}
             </span>
@@ -69,9 +68,9 @@ const ProjectCard = ({
               href={preview}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium text-sm rounded-lg transition-colors text-center"
+              className="flex-1 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white font-medium text-sm rounded-lg transition-all text-center shadow-sm hover:shadow-md"
             >
-              🚀 Demo
+              Demo
             </a>
           )}
           {github && (
@@ -79,9 +78,9 @@ const ProjectCard = ({
               href={github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium text-sm rounded-lg transition-colors text-center"
+              className="flex-1 px-4 py-2.5 border border-gray-700 hover:border-gray-600 hover:bg-gray-800/50 text-gray-300 font-medium text-sm rounded-lg transition-all text-center"
             >
-              💻 Código
+              Código
             </a>
           )}
         </div>

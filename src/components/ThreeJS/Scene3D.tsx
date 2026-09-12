@@ -21,16 +21,16 @@ const WebGLContextManager = () => {
     
     const handleContextLost = (event: Event) => {
       event.preventDefault()
-      console.warn('⚠️ WebGL Context Lost - tentando recuperar...')
+      console.warn('WebGL context lost. Attempting recovery...')
     }
     
     const handleContextRestored = () => {
-      console.log('✅ WebGL Context Restored - recarregando página...')
-      setTimeout(() => window.location.reload(), 100)
+      console.log('WebGL context restored successfully')
+      gl.resetState()
     }
     
-    canvas.addEventListener('webglcontextlost', handleContextLost)
-    canvas.addEventListener('webglcontextrestored', handleContextRestored)
+    canvas.addEventListener('webglcontextlost', handleContextLost, false)
+    canvas.addEventListener('webglcontextrestored', handleContextRestored, false)
     
     return () => {
       canvas.removeEventListener('webglcontextlost', handleContextLost)
