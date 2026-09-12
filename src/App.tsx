@@ -51,7 +51,7 @@ function App() {
           setTimeout(() => setShowContent(true), 1000)
         }} />
       ) : showContent ? (
-        <div className="min-h-screen bg-black text-white relative">
+        <div className="min-h-screen bg-[#0a0a0a] text-white relative">
           <Navigation />
           <main className="relative z-10 overflow-visible">
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Carregando...</div>}>

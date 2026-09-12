@@ -351,6 +351,10 @@ const Hero = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className="space-y-4 md:space-y-6 order-2 md:order-1 relative z-20">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 mb-4">
+              <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
+              <span className="text-sm font-medium text-primary-400">Disponível para oportunidades</span>
+            </div>
             <h1
               ref={titleRef}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white leading-tight"
@@ -368,7 +372,7 @@ const Hero = () => {
             </h1>
             <p
               ref={subtitleRef}
-              className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 px-2"
+              className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 px-2 max-w-2xl"
             >
               Desenvolvedor Full Stack com foco em Engenharia de Qualidade e
               trajetória multidisciplinar em Automação de QA e Suporte Técnico.
@@ -381,29 +385,29 @@ const Hero = () => {
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  scrollToSection('projects')
+                  scrollToSection('contact')
                 }}
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 active:bg-primary-700 transition-colors transform hover:scale-105 active:scale-95 text-sm sm:text-base relative z-30 touch-manipulation"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 active:bg-primary-700 transition-all transform hover:scale-105 active:scale-95 text-sm sm:text-base relative z-30 touch-manipulation shadow-lg shadow-primary-500/25"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Ver Projetos
+                Entrar em Contato
               </button>
               <button
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  scrollToSection('about')
+                  scrollToSection('projects')
                 }}
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary-500 text-primary-400 rounded-lg font-semibold hover:bg-primary-500/10 active:bg-primary-500/20 transition-colors text-sm sm:text-base relative z-30 touch-manipulation"
+                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 border border-gray-700 text-gray-300 rounded-lg font-semibold hover:border-gray-600 hover:bg-gray-800/50 active:bg-gray-800 transition-all text-sm sm:text-base relative z-30 touch-manipulation"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Sobre Mim
+                Ver Projetos
               </button>
             </div>
           </div>
