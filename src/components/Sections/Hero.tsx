@@ -25,11 +25,11 @@ const Hero = () => {
   const [scrollProgress, setScrollProgress] = useState(0)
   
   const typedName = useTypingAnimation({
-    texts: ['Predo', 'Pedro'],
-    typingSpeed: 150,
+    texts: ['Pedro'],
+    typingSpeed: 120,
     deletingSpeed: 80,
-    pauseTime: 1500,
-    repeat: true,
+    pauseTime: 8000,
+    repeat: false,
   })
 
   useEffect(() => {
@@ -367,15 +367,15 @@ const Hero = () => {
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
               >
                 {greeting}
-                {showNameAnimation && (
+              {showNameAnimation && (
                   <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                     {typedName}
-                    <span className="animate-pulse">|</span>
+                    <span className="inline-block w-0.5 h-[0.9em] bg-blue-400 animate-pulse ml-1" />
                   </span>
                 )}
-                {!showNameAnimation && greeting && (
-                  <span className="animate-pulse">|</span>
-                )}
+              {!showNameAnimation && greeting && (
+                <span className="inline-block w-0.5 h-[0.9em] bg-blue-400 animate-pulse ml-1" />
+              )}
               </h1>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent mb-2">
                 Pedro Augusto Santos Andrade

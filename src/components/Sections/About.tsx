@@ -1,6 +1,4 @@
-import { useEffect, Suspense, useRef } from 'react'
-import Scene3D from '../ThreeJS/Scene3D'
-import About3D from '../ThreeJS/About3D'
+import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
@@ -128,12 +126,12 @@ const About = () => {
     <section
       id="about"
       ref={elementRef}
-      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
       
       <div className="max-w-7xl mx-auto relative">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="max-w-4xl mx-auto">
           <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
@@ -162,9 +160,9 @@ const About = () => {
               </p>
             </div>
 
-            <div className="animate-on-scroll">
-              <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto lg:mx-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-full blur-xl opacity-30" />
+            <div className="animate-on-scroll flex justify-center mb-8">
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-40" />
                 <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-blue-400/30 shadow-2xl">
                   <img
                     src="/images/face.png"
@@ -202,25 +200,6 @@ const About = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="relative h-[400px] sm:h-[500px] lg:h-[800px] animate-on-scroll overflow-hidden lg:overflow-visible">
-            <div className="absolute inset-0 w-full h-full pointer-events-auto" style={{ zIndex: 1 }}>
-              <Suspense fallback={
-                <div className="w-full h-full bg-gradient-to-br from-cyan-900/10 via-blue-900/10 to-purple-900/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-500/10">
-                  <div className="text-sm text-cyan-300/50">Carregando 3D...</div>
-                </div>
-              }>
-                <Scene3D
-                  cameraPosition={[0, 0.3, 8.5]}
-                  enableControls={true}
-                  enableZoom={false}
-                  className="w-full h-full"
-                >
-                  <About3D />
-                </Scene3D>
-              </Suspense>
             </div>
           </div>
         </div>

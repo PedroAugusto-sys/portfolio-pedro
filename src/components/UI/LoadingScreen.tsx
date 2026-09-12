@@ -14,7 +14,7 @@ const GlowingSphere = ({ progress }: GlowingSphereProps) => {
       <mesh position={[0, 0, 0]} scale={0.8 + (progress / 100) * 0.3}>
         <icosahedronGeometry args={[1, 2]} />
         <meshBasicMaterial
-          color="#06b6d4"
+          color="#3b82f6"
           wireframe
           transparent
           opacity={0.6}
@@ -25,7 +25,7 @@ const GlowingSphere = ({ progress }: GlowingSphereProps) => {
       <mesh position={[0, 0, 0]} scale={0.7}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshBasicMaterial
-          color="#06b6d4"
+          color="#3b82f6"
           transparent
           opacity={0.2}
         />
@@ -42,7 +42,7 @@ const GlowingSphere = ({ progress }: GlowingSphereProps) => {
         />
       </mesh>
 
-      <pointLight position={[0, 0, 0]} intensity={1} color="#06b6d4" />
+      <pointLight position={[0, 0, 0]} intensity={1} color="#3b82f6" />
     </group>
   )
 }
@@ -187,7 +187,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       {/* Ambient glow effects */}
       <div className="absolute inset-0">
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[100px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px]"
           style={{
             animation: prefersReducedMotion ? 'none' : 'pulse 3s ease-in-out infinite',
           }}
@@ -225,7 +225,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         
         {/* Loading text with gradient */}
         <div className="mb-8">
-          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
             {hasError ? 'Carregando versão simplificada...' : 'Carregando...'}
           </h2>
           <p className="text-gray-400 text-sm">
@@ -235,15 +235,15 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         
         {/* Progress bar with gradient glow */}
         <div className="w-full max-w-md space-y-3">
-          <div className="relative w-full h-2 bg-gray-900 rounded-full overflow-hidden border border-cyan-500/20">
+          <div className="relative w-full h-2 bg-gray-900 rounded-full overflow-hidden border border-blue-500/20">
             {/* Glow effect behind bar */}
             <div 
-              className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 blur-sm"
+              className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-sm"
               style={{ width: `${progress}%` }}
             />
             {/* Actual progress bar */}
             <div
-              className="relative h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 transition-all duration-500 ease-out"
+              className="relative h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             >
               {/* Shimmer effect */}
