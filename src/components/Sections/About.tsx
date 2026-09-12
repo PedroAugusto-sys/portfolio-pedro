@@ -128,24 +128,24 @@ const About = () => {
     <section
       id="about"
       ref={elementRef}
-      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-gray-900 via-purple-900/10 to-gray-900"
+      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(120,119,198,0.08),rgba(0,0,0,0))]" />
+      <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
       
       <div className="max-w-7xl mx-auto relative">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                Sobre <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Mim</span>
+                Sobre <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Mim</span>
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full" />
+              <div className="h-1 w-24 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full" />
             </div>
 
             <div className="animate-on-scroll space-y-5 text-gray-300 text-base sm:text-lg leading-relaxed">
               <p>
                 <strong className="text-white">Engenheiro de Software</strong> formado pela Fatesg (conclusão em 2025) com
-                sólida trajetória de <strong className="text-purple-300">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
+                sólida trajetória de <strong className="text-cyan-300">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
                 Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e
                 Automação.
               </p>
@@ -155,7 +155,7 @@ const About = () => {
                 problemas reais do usuário.
               </p>
               <p>
-                Possuo competências em <strong className="text-teal-300">C#, React.js e automação</strong> no geral, com inglês
+                Possuo competências em <strong className="text-blue-300">C#, React.js e automação</strong> no geral, com inglês
                 fluente para atuação em times globais. Busco aplicar minha
                 experiência em engenharia para escalar processos de testes,
                 otimizar os ciclos de desenvolvimento e de atendimento ao cliente.
@@ -164,8 +164,8 @@ const About = () => {
 
             <div className="animate-on-scroll">
               <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto lg:mx-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-teal-500 rounded-full blur-xl opacity-30" />
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-purple-400/30 shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-full blur-xl opacity-30" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-blue-400/30 shadow-2xl">
                   <img
                     src="/images/face.png"
                     alt="Pedro Augusto - Engenheiro de Software"
@@ -180,18 +180,18 @@ const About = () => {
                 <h3 className="text-2xl sm:text-3xl font-bold text-white">
                   Tecnologias
                 </h3>
-                <div className="h-1 flex-1 bg-gradient-to-r from-purple-500/30 to-transparent rounded-full" />
+                <div className="h-1 flex-1 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-purple-500/30 rounded-full" />
               </div>
               {Object.entries(skillsGroups).map(([category, skills]) => (
                 <div key={category} className="space-y-3">
-                  <h4 className="text-purple-300 font-semibold text-sm uppercase tracking-wider">
+                  <h4 className="text-cyan-300 font-semibold text-sm uppercase tracking-wider">
                     {category}
                   </h4>
                   <div className="flex flex-wrap gap-3">
                     {skills.map((skill, index) => (
                       <span
                         key={skill}
-                        className="skill-chip px-4 py-2 bg-gradient-to-br from-purple-500/20 to-teal-500/20 text-purple-200 rounded-xl font-medium text-sm border border-purple-400/20 backdrop-blur-sm shadow-lg hover:shadow-purple-500/20 transition-shadow cursor-default"
+                        className="skill-chip px-4 py-2 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20 text-cyan-200 rounded-xl font-medium text-sm border border-cyan-400/20 backdrop-blur-sm shadow-lg hover:shadow-cyan-500/20 transition-shadow cursor-default"
                         style={{
                           animationDelay: `${index * 0.1}s`
                         }}
@@ -208,8 +208,8 @@ const About = () => {
           <div className="relative h-[400px] sm:h-[500px] lg:h-[800px] animate-on-scroll overflow-hidden lg:overflow-visible">
             <div className="absolute inset-0 w-full h-full pointer-events-auto" style={{ zIndex: 1 }}>
               <Suspense fallback={
-                <div className="w-full h-full bg-gradient-to-br from-purple-900/20 to-teal-900/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-purple-500/10">
-                  <div className="text-sm text-purple-300/50">Carregando 3D...</div>
+                <div className="w-full h-full bg-gradient-to-br from-cyan-900/10 via-blue-900/10 to-purple-900/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-500/10">
+                  <div className="text-sm text-cyan-300/50">Carregando 3D...</div>
                 </div>
               }>
                 <Scene3D

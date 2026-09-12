@@ -346,17 +346,17 @@ const Hero = () => {
     <section
       id="hero"
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900/20 via-gray-900 to-teal-900/20"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.15),rgba(0,0,0,0))]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(6,182,212,0.08),rgba(0,0,0,0))]" />
+      <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-radial from-purple-500/5 via-transparent to-transparent" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div className="space-y-6 lg:space-y-8 order-2 lg:order-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-teal-500/10 border border-purple-500/20 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-              <span className="text-sm font-medium bg-gradient-to-r from-purple-300 to-teal-300 bg-clip-text text-transparent">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-lg shadow-cyan-400/50" />
+              <span className="text-sm font-medium bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
                 Disponível para Oportunidades
               </span>
             </div>
@@ -368,7 +368,7 @@ const Hero = () => {
               >
                 {greeting}
                 {showNameAnimation && (
-                  <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                     {typedName}
                     <span className="animate-pulse">|</span>
                   </span>
@@ -377,10 +377,10 @@ const Hero = () => {
                   <span className="animate-pulse">|</span>
                 )}
               </h1>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold text-purple-300/80 mb-2">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent mb-2">
                 Pedro Augusto Santos Andrade
               </div>
-              <div className="text-base sm:text-lg text-teal-300/60 font-medium">
+              <div className="text-base sm:text-lg text-cyan-300/70 font-medium">
                 QA Automation • SDET • Engenheiro de Software
               </div>
             </div>
@@ -406,7 +406,7 @@ const Hero = () => {
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 Ver Projetos
@@ -420,7 +420,7 @@ const Hero = () => {
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 border-2 border-purple-400/30 text-purple-200 rounded-xl font-semibold hover:border-purple-400/60 hover:bg-purple-500/10 backdrop-blur-sm transition-all"
+                className="w-full sm:w-auto px-8 py-3.5 border-2 border-cyan-400/30 text-cyan-200 rounded-xl font-semibold hover:border-cyan-400/60 hover:bg-cyan-500/10 backdrop-blur-sm transition-all"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 Entrar em Contato
@@ -428,11 +428,11 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="relative h-[350px] sm:h-[450px] lg:h-[600px] w-full flex items-center justify-center order-1 lg:order-2">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-teal-500/10 rounded-3xl blur-3xl" />
+          <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] xl:h-[800px] w-full flex items-center justify-center order-1 lg:order-2">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
             <div 
               ref={canvasContainerRef}
-              className="relative h-full w-full max-w-lg"
+              className="relative h-full w-full"
               style={{ 
                 display: 'flex',
                 alignItems: 'center',
@@ -446,13 +446,13 @@ const Hero = () => {
               >
                 <Suspense 
                   fallback={
-                    <div className="w-full h-full bg-gradient-to-br from-purple-900/20 to-teal-900/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-purple-500/10">
-                      <div className="text-sm text-purple-300/50">Carregando...</div>
+                    <div className="w-full h-full bg-gradient-to-br from-cyan-900/10 to-purple-900/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-500/10">
+                      <div className="text-sm text-blue-300/50">Carregando...</div>
                     </div>
                   }
                 >
                   <Scene3D
-                    cameraPosition={isMobile ? [0, 0.5, 4.5] : [0, 0.8, 5]}
+                    cameraPosition={isMobile ? [0, 0, 3] : [0, 0.5, 3.5]}
                     enableControls={!isMobile}
                     enableZoom={false}
                     className="w-full h-full"
@@ -468,7 +468,7 @@ const Hero = () => {
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <svg
-          className="w-6 h-6 text-purple-300"
+          className="w-6 h-6 text-cyan-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

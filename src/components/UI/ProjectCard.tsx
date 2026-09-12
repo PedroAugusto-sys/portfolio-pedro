@@ -51,13 +51,13 @@ const ProjectCard = ({
         setIsHovered(false)
         handleMouseLeave()
       }}
-      className="group relative bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-400/40 transition-all duration-300 flex flex-col w-full shadow-xl hover:shadow-2xl hover:shadow-purple-500/20"
+      className="group relative bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm border border-cyan-500/20 rounded-2xl overflow-hidden hover:border-cyan-400/40 transition-all duration-300 flex flex-col w-full shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20"
       style={{
         transformStyle: 'preserve-3d',
         transition: prefersReducedMotion ? 'none' : 'transform 0.1s ease-out, box-shadow 0.3s ease',
       }}
     >
-      <div className="aspect-video bg-gradient-to-br from-purple-900/30 via-gray-800 to-teal-900/30 relative overflow-hidden flex-shrink-0">
+        <div className="aspect-video bg-gradient-to-br from-cyan-900/30 via-gray-800 to-purple-900/30 relative overflow-hidden flex-shrink-0">
         {image ? (
           <>
             <img
@@ -94,16 +94,16 @@ const ProjectCard = ({
         )}
         
         {/* Featured badge for special projects */}
-        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full text-xs font-semibold text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full text-xs font-semibold text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
           Destaque
         </div>
       </div>
       
       <div className="p-6 flex flex-col flex-grow relative">
         {/* Glow effect on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-b-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-b-2xl" />
         
-        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 relative z-10 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-300 group-hover:to-teal-300 group-hover:bg-clip-text transition-all">
+        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 relative z-10 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text transition-all">
           {title}
         </h3>
         
@@ -115,13 +115,13 @@ const ProjectCard = ({
           {technologies.slice(0, 4).map((tech) => (
             <span
               key={tech}
-              className="px-3 py-1.5 bg-gradient-to-r from-purple-500/10 to-teal-500/10 border border-purple-400/20 text-purple-200 text-xs sm:text-sm rounded-lg font-medium backdrop-blur-sm hover:border-purple-400/40 transition-colors"
+              className="px-3 py-1.5 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 border border-cyan-400/20 text-cyan-200 text-xs sm:text-sm rounded-lg font-medium backdrop-blur-sm hover:border-cyan-400/40 transition-colors"
             >
               {tech}
             </span>
           ))}
           {technologies.length > 4 && (
-            <span className="px-3 py-1.5 text-purple-300/60 text-xs sm:text-sm font-medium">
+            <span className="px-3 py-1.5 text-cyan-300/60 text-xs sm:text-sm font-medium">
               +{technologies.length - 4}
             </span>
           )}
@@ -133,7 +133,7 @@ const ProjectCard = ({
               href={preview}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-5 py-3 bg-gradient-to-r from-purple-500 to-teal-500 hover:from-purple-600 hover:to-teal-600 text-white font-semibold text-sm sm:text-base rounded-xl transition-all text-center shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transform hover:scale-105 active:scale-95"
+              className="flex-1 px-5 py-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white font-semibold text-sm sm:text-base rounded-xl transition-all text-center shadow-lg hover:shadow-xl hover:shadow-cyan-500/30 transform hover:scale-105 active:scale-95"
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +149,7 @@ const ProjectCard = ({
               href={github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 px-5 py-3 border-2 border-purple-400/30 hover:border-purple-400/60 hover:bg-purple-500/10 text-purple-200 font-semibold text-sm sm:text-base rounded-xl transition-all text-center backdrop-blur-sm"
+              className="flex-1 px-5 py-3 border-2 border-cyan-400/30 hover:border-cyan-400/60 hover:bg-cyan-500/10 text-cyan-200 font-semibold text-sm sm:text-base rounded-xl transition-all text-center backdrop-blur-sm"
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

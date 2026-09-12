@@ -5,6 +5,7 @@ import Navigation from './components/UI/Navigation'
 import LoadingScreen from './components/UI/LoadingScreen'
 import GoogleAnalytics from './components/Analytics/GoogleAnalytics'
 import TagManager from './components/Analytics/TagManager'
+import GlobalBackground3D from './components/ThreeJS/GlobalBackground3D'
 import { generateStructuredData } from './utils/seo'
 
 const Hero = lazy(() => import('./components/Sections/Hero'))
@@ -51,7 +52,8 @@ function App() {
           setTimeout(() => setShowContent(true), 1000)
         }} />
       ) : showContent ? (
-        <div className="min-h-screen bg-[#0a0a0a] text-white relative">
+        <div className="min-h-screen bg-black text-white relative">
+          <GlobalBackground3D />
           <Navigation />
           <main className="relative z-10 overflow-visible">
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Carregando...</div>}>
