@@ -5,6 +5,7 @@ import { useSmoothScroll } from '../../hooks/useSmoothScroll'
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('hero')
   const { scrollTo } = useSmoothScroll()
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -16,6 +17,21 @@ const Navigation = () => {
 
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolled(window.scrollY > 50)
+        
+        const sections = ['hero', 'about', 'projects', 'achievements', 'contact']
+        const scrollPosition = window.scrollY + window.innerHeight / 3
+
+        for (const sectionId of sections) {
+          const element = document.getElementById(sectionId)
+          if (element) {
+            const { offsetTop, offsetHeight } = element
+            if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+              setActiveSection(sectionId)
+              break
+            }
+          }
+        }
+        
         scrollTimeoutRef.current = null
       }, 10)
     }
@@ -33,6 +49,7 @@ const Navigation = () => {
     scrollTo(sectionId, { duration: 1.0, offset: -80 })
     trackEvent('navigation_click', 'navigation', sectionId)
     setIsMobileMenuOpen(false)
+    setActiveSection(sectionId)
   }
 
   const navItems = [
@@ -40,35 +57,39 @@ const Navigation = () => {
     { id: 'about', label: 'Sobre' },
     { id: 'projects', label: 'Projetos' },
     { id: 'achievements', label: 'Feitos' },
-    { id: 'contact', label: 'Contatos' },
+    { id: 'contact', label: 'Contato' },
   ]
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-black/90 backdrop-blur-md shadow-lg'
+          ? 'bg-gray-900/95 backdrop-blur-xl shadow-lg shadow-purple-500/5 border-b border-purple-500/10'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           <div className="flex-shrink-0">
             <button
               onClick={() => scrollToSection('hero')}
-              className="text-xl font-bold text-white hover:text-primary-400 transition-colors"
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent hover:from-purple-300 hover:to-teal-300 transition-all"
             >
-              Portfolio
+              Pedro Augusto
             </button>
           </div>
 
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-baseline space-x-1">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeSection === item.id
+                      ? 'bg-gradient-to-r from-purple-500/20 to-teal-500/20 text-white border border-purple-400/30'
+                      : 'text-gray-300 hover:text-white hover:bg-purple-500/10'
+                  }`}
                 >
                   {item.label}
                 </button>
@@ -79,7 +100,7 @@ const Navigation = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-300 hover:text-white p-2"
+              className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-purple-500/10 transition-colors"
               aria-label="Toggle menu"
             >
               <svg
@@ -110,13 +131,17 @@ const Navigation = () => {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-gray-800">
+        <div className="md:hidden bg-gray-900/98 backdrop-blur-xl border-t border-purple-500/10 shadow-lg">
           <div className="px-4 pt-3 pb-4 space-y-2">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="text-gray-300 hover:text-white hover:bg-gray-800/50 block px-4 py-3 rounded-lg text-base font-medium w-full text-left transition-colors"
+                className={`block px-5 py-3.5 rounded-xl text-base font-medium w-full text-left transition-all ${
+                  activeSection === item.id
+                    ? 'bg-gradient-to-r from-purple-500/20 to-teal-500/20 text-white border border-purple-400/30'
+                    : 'text-gray-300 hover:text-white hover:bg-purple-500/10'
+                }`}
               >
                 {item.label}
               </button>

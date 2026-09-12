@@ -19,8 +19,8 @@ function App() {
 
   useEffect(() => {
     const structuredData = generateStructuredData({
-      name: 'Pedro',
-      description: 'Desenvolvedor Full Stack com foco em Engenharia de Qualidade e trajetória multidisciplinar em Automação de QA e Suporte Técnico.',
+      name: 'Pedro Augusto Santos Andrade',
+      description: 'Engenheiro de Software - QA Automation, SDET e Desenvolvedor Full Stack. Especializado em automação de testes, qualidade de software e desenvolvimento com React, TypeScript, Java e Python.',
       url: import.meta.env.VITE_SITE_URL || window.location.origin,
     })
 

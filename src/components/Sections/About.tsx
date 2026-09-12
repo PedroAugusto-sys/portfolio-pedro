@@ -3,6 +3,7 @@ import Scene3D from '../ThreeJS/Scene3D'
 import About3D from '../ThreeJS/About3D'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -16,6 +17,8 @@ const About = () => {
   })
   const contentRef = useRef<HTMLDivElement>(null)
   const animationsCreatedRef = useRef(false)
+  const skillsRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     if (hasIntersected) {
@@ -25,8 +28,6 @@ const About = () => {
 
   useEffect(() => {
     if (hasIntersected && contentRef.current && !animationsCreatedRef.current) {
-      // Removida animação do contentRef - deve permanecer sem animação
-
       const elements = elementRef.current?.querySelectorAll('.animate-on-scroll') || []
       
       elements.forEach((el, index) => {
@@ -65,7 +66,6 @@ const About = () => {
           },
         })
 
-        // Efeito parallax 3D no scroll
         gsap.to(el, {
           y: -50,
           rotationY: 5,
@@ -84,6 +84,37 @@ const About = () => {
     }
   }, [hasIntersected, elementRef])
 
+  // Floating animation for skill chips
+  useEffect(() => {
+    if (!hasIntersected || !skillsRef.current || prefersReducedMotion) return
+
+    const skillChips = skillsRef.current.querySelectorAll('.skill-chip')
+    
+    skillChips.forEach((chip, index) => {
+      const delay = index * 0.1
+      const duration = 3 + (index % 3) * 0.5
+      const yOffset = 10 + (index % 4) * 3
+      
+      gsap.to(chip, {
+        y: `+=${yOffset}`,
+        duration: duration,
+        delay: delay,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      })
+
+      gsap.to(chip, {
+        rotateZ: (index % 2 === 0) ? 2 : -2,
+        duration: duration * 1.2,
+        delay: delay,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      })
+    })
+  }, [hasIntersected, prefersReducedMotion])
+
   const skillsGroups = {
     'Linguagens': ['Java', 'Python', 'C#', 'TypeScript', 'JavaScript'],
     'Frontend': ['React', 'Angular', 'HTML', 'SCSS', 'Tailwind CSS', 'Bootstrap', 'Three.js', 'GSAP'],
@@ -97,60 +128,73 @@ const About = () => {
     <section
       id="about"
       ref={elementRef}
-      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative min-h-screen py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-gray-900 via-purple-900/10 to-gray-900"
     >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(120,119,198,0.08),rgba(0,0,0,0))]" />
+      
       <div className="max-w-7xl mx-auto relative">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
-          <div ref={contentRef} className="space-y-8 relative z-10 md:pr-4">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Sobre <span className="text-primary-400">Mim</span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                Sobre <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Mim</span>
               </h2>
+              <div className="h-1 w-24 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full" />
             </div>
 
-            <div className="animate-on-scroll space-y-4 text-gray-300 text-base sm:text-lg">
+            <div className="animate-on-scroll space-y-5 text-gray-300 text-base sm:text-lg leading-relaxed">
               <p>
-                Engenheiro de Software formado pela Fatesg (conclusão em 2025) com
-                sólida trajetória de 3 anos e 8 meses na Escolar Manager. Atuei como
+                <strong className="text-white">Engenheiro de Software</strong> formado pela Fatesg (conclusão em 2025) com
+                sólida trajetória de <strong className="text-purple-300">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
                 Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e
-                Automação. Neste caminho, fui desenvolvendo uma visão crítica sobre
+                Automação.
+              </p>
+              <p>
+                Neste caminho, fui desenvolvendo uma visão crítica sobre
                 o produto e garantindo entregas de alta qualidade que resolvem
                 problemas reais do usuário.
               </p>
               <p>
-                Possuo competências em C#, React.js e automação no geral, com inglês
+                Possuo competências em <strong className="text-teal-300">C#, React.js e automação</strong> no geral, com inglês
                 fluente para atuação em times globais. Busco aplicar minha
                 experiência em engenharia para escalar processos de testes,
                 otimizar os ciclos de desenvolvimento e de atendimento ao cliente.
               </p>
             </div>
 
-            {/* Foto de Perfil */}
             <div className="animate-on-scroll">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-primary-500/30 shadow-lg shadow-primary-500/20 mx-auto md:mx-0">
-                <img
-                  src="/images/face.png"
-                  alt="Pedro - Desenvolvedor"
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto lg:mx-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-teal-500 rounded-full blur-xl opacity-30" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-purple-400/30 shadow-2xl">
+                  <img
+                    src="/images/face.png"
+                    alt="Pedro Augusto - Engenheiro de Software"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Skills */}
-            <div className="animate-on-scroll space-y-6">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                Tecnologias
-              </h3>
+            <div className="animate-on-scroll space-y-6" ref={skillsRef}>
+              <div className="flex items-center gap-3 mb-6">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                  Tecnologias
+                </h3>
+                <div className="h-1 flex-1 bg-gradient-to-r from-purple-500/30 to-transparent rounded-full" />
+              </div>
               {Object.entries(skillsGroups).map(([category, skills]) => (
-                <div key={category}>
-                  <h4 className="text-primary-400 font-semibold mb-2 text-sm uppercase tracking-wide">
+                <div key={category} className="space-y-3">
+                  <h4 className="text-purple-300 font-semibold text-sm uppercase tracking-wider">
                     {category}
                   </h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {skills.map((skill) => (
+                  <div className="flex flex-wrap gap-3">
+                    {skills.map((skill, index) => (
                       <span
                         key={skill}
-                        className="px-3 py-1.5 bg-primary-500/20 text-primary-300 rounded-lg font-medium text-sm"
+                        className="skill-chip px-4 py-2 bg-gradient-to-br from-purple-500/20 to-teal-500/20 text-purple-200 rounded-xl font-medium text-sm border border-purple-400/20 backdrop-blur-sm shadow-lg hover:shadow-purple-500/20 transition-shadow cursor-default"
+                        style={{
+                          animationDelay: `${index * 0.1}s`
+                        }}
                       >
                         {skill}
                       </span>
@@ -161,10 +205,13 @@ const About = () => {
             </div>
           </div>
 
-          {/* Objeto 3D Decorativo */}
-          <div className="relative h-[400px] sm:h-[500px] md:h-[800px] lg:h-[900px] xl:h-[1000px] animate-on-scroll overflow-hidden md:overflow-visible">
+          <div className="relative h-[400px] sm:h-[500px] lg:h-[800px] animate-on-scroll overflow-hidden lg:overflow-visible">
             <div className="absolute inset-0 w-full h-full pointer-events-auto" style={{ zIndex: 1 }}>
-              <Suspense fallback={<div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">Carregando 3D...</div>}>
+              <Suspense fallback={
+                <div className="w-full h-full bg-gradient-to-br from-purple-900/20 to-teal-900/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-purple-500/10">
+                  <div className="text-sm text-purple-300/50">Carregando 3D...</div>
+                </div>
+              }>
                 <Scene3D
                   cameraPosition={[0, 0.3, 8.5]}
                   enableControls={true}

@@ -346,55 +346,57 @@ const Hero = () => {
     <section
       id="hero"
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-900/20 via-gray-900 to-teal-900/20"
     >
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div className="space-y-4 md:space-y-6 order-2 md:order-1 relative z-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 mb-4">
-              <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
-              <span className="text-sm font-medium text-primary-400">Disponível para oportunidades</span>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.15),rgba(0,0,0,0))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(6,182,212,0.08),rgba(0,0,0,0))]" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="space-y-6 lg:space-y-8 order-2 lg:order-1 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-teal-500/10 border border-purple-500/20 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-sm font-medium bg-gradient-to-r from-purple-300 to-teal-300 bg-clip-text text-transparent">
+                Disponível para Oportunidades
+              </span>
             </div>
-            <h1
-              ref={titleRef}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white leading-tight"
-            >
-              {greeting}
-              {showNameAnimation && (
-                <span className="text-primary-400">
-                  {typedName}
+            
+            <div>
+              <h1
+                ref={titleRef}
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
+              >
+                {greeting}
+                {showNameAnimation && (
+                  <span className="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">
+                    {typedName}
+                    <span className="animate-pulse">|</span>
+                  </span>
+                )}
+                {!showNameAnimation && greeting && (
                   <span className="animate-pulse">|</span>
-                </span>
-              )}
-              {!showNameAnimation && greeting && (
-                <span className="animate-pulse">|</span>
-              )}
-            </h1>
+                )}
+              </h1>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold text-purple-300/80 mb-2">
+                Pedro Augusto Santos Andrade
+              </div>
+              <div className="text-base sm:text-lg text-teal-300/60 font-medium">
+                QA Automation • SDET • Engenheiro de Software
+              </div>
+            </div>
+            
             <p
               ref={subtitleRef}
-              className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 px-2 max-w-2xl"
+              className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0"
             >
-              Desenvolvedor Full Stack com foco em Engenharia de Qualidade e
-              trajetória multidisciplinar em Automação de QA e Suporte Técnico.
+              Desenvolvedor Full Stack com foco em Engenharia de Qualidade. 
+              Trajetória multidisciplinar em Automação de QA, SDET e Suporte Técnico.
             </p>
+            
             <div 
               ref={ctaRef} 
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center relative z-30"
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center"
             >
-              <button
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  scrollToSection('contact')
-                }}
-                onTouchStart={(e) => {
-                  e.stopPropagation()
-                }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 active:bg-primary-700 transition-all transform hover:scale-105 active:scale-95 text-sm sm:text-base relative z-30 touch-manipulation shadow-lg shadow-primary-500/25"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                Entrar em Contato
-              </button>
               <button
                 onClick={(e) => {
                   e.preventDefault()
@@ -404,20 +406,34 @@ const Hero = () => {
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 border border-gray-700 text-gray-300 rounded-lg font-semibold hover:border-gray-600 hover:bg-gray-800/50 active:bg-gray-800 transition-all text-sm sm:text-base relative z-30 touch-manipulation"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 Ver Projetos
               </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  scrollToSection('contact')
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation()
+                }}
+                className="w-full sm:w-auto px-8 py-3.5 border-2 border-purple-400/30 text-purple-200 rounded-xl font-semibold hover:border-purple-400/60 hover:bg-purple-500/10 backdrop-blur-sm transition-all"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                Entrar em Contato
+              </button>
             </div>
           </div>
 
-          <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[800px] w-full flex items-end justify-center pb-4 sm:pb-8 md:pb-12 order-1 md:order-2" style={{ zIndex: 1 }}>
+          <div className="relative h-[350px] sm:h-[450px] lg:h-[600px] w-full flex items-center justify-center order-1 lg:order-2">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-teal-500/10 rounded-3xl blur-3xl" />
             <div 
               ref={canvasContainerRef}
-              className="h-full w-full max-w-2xl"
+              className="relative h-full w-full max-w-lg"
               style={{ 
-                position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -427,17 +443,11 @@ const Hero = () => {
               <div 
                 ref={character3DRef} 
                 className="h-full w-full"
-                style={{ 
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
               >
                 <Suspense 
                   fallback={
-                    <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center text-xs text-gray-400">
-                      Carregando...
+                    <div className="w-full h-full bg-gradient-to-br from-purple-900/20 to-teal-900/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-purple-500/10">
+                      <div className="text-sm text-purple-300/50">Carregando...</div>
                     </div>
                   }
                 >
@@ -458,7 +468,7 @@ const Hero = () => {
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <svg
-          className="w-6 h-6 text-white"
+          className="w-6 h-6 text-purple-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
