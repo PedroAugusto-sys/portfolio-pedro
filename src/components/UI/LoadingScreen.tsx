@@ -1,126 +1,138 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { configureGLTFLoader } from '../../utils/textureLoader'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import * as THREE from 'three'
 
-interface OrbitingParticlesProps {
+interface ParticleSwarmProps {
   progress: number
   prefersReducedMotion: boolean
 }
 
-const OrbitingParticles = ({ progress, prefersReducedMotion }: OrbitingParticlesProps) => {
-  const groupRef = useRef<THREE.Group>(null)
-  const particlesRef = useRef<THREE.Mesh[]>([])
-  const coreRef = useRef<THREE.Mesh>(null)
-
-  // Create orbital particles
-  const particles = 12
-  const particleGeometry = new THREE.SphereGeometry(0.08, 16, 16)
-
-  useFrame((state) => {
-    if (prefersReducedMotion) return
-
-    const time = state.clock.elapsedTime
-
-    // Rotate entire group
-    if (groupRef.current) {
-      groupRef.current.rotation.y = time * 0.3
-      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.2
-    }
-
-    // Animate core with subtle pulse
-    if (coreRef.current) {
-      const pulse = 1 + Math.sin(time * 2) * 0.1
-      coreRef.current.scale.setScalar(pulse * (0.5 + progress / 200))
+const ParticleSwarm = ({ progress, prefersReducedMotion }: ParticleSwarmProps) => {
+  const pointsRef = useRef<THREE.Points>(null)
+  
+  // Particle count - balanced for mobile performance
+  const particleCount = 3000
+  
+  const { positions, colors } = useMemo(() => {
+    const positions = new Float32Array(particleCount * 3)
+    const colors = new Float32Array(particleCount * 3)
+    
+    // Initialize particles in a volume
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3
       
-      // Rotate core
-      coreRef.current.rotation.y = time * 0.5
-      coreRef.current.rotation.z = time * 0.3
+      // Start in a sphere volume
+      const radius = Math.random() * 3
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.acos(2 * Math.random() - 1)
+      
+      positions[i3] = radius * Math.sin(phi) * Math.cos(theta)
+      positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
+      positions[i3 + 2] = radius * Math.cos(phi)
+      
+      // Initial colors - blue to purple to magenta gradient
+      const hue = 0.6 - (i / particleCount) * 0.2 // 0.6 (blue) to 0.4 (magenta)
+      const color = new THREE.Color().setHSL(hue, 0.9, 0.6)
+      colors[i3] = color.r
+      colors[i3 + 1] = color.g
+      colors[i3 + 2] = color.b
     }
-
-    // Animate individual particles in orbit
-    particlesRef.current.forEach((particle, i) => {
-      if (!particle) return
-
-      const angle = (i / particles) * Math.PI * 2 + time * 0.8
-      const radius = 1.8 + Math.sin(time * 1.5 + i) * 0.3
-      const height = Math.sin(angle * 2 + time) * 0.5
-
-      particle.position.x = Math.cos(angle) * radius
-      particle.position.z = Math.sin(angle) * radius
-      particle.position.y = height
-
-      // Individual rotation
-      particle.rotation.x = time * 2 + i
-      particle.rotation.y = time * 1.5 + i
-
-      // Fade particles based on progress
-      const material = particle.material as THREE.MeshBasicMaterial
-      material.opacity = 0.6 + Math.sin(time * 3 + i) * 0.3
-    })
+    
+    return { positions, colors }
+  }, [particleCount])
+  
+  useFrame((state) => {
+    if (!pointsRef.current || prefersReducedMotion) return
+    
+    const time = state.clock.elapsedTime
+    const geometry = pointsRef.current.geometry
+    const positionAttribute = geometry.attributes.position as THREE.BufferAttribute
+    const colorAttribute = geometry.attributes.color as THREE.BufferAttribute
+    
+    const progressFactor = progress / 100
+    
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3
+      
+      // Normalized index for patterns
+      const norm = i / particleCount
+      
+      // Create elegant swarm motion inspired by DUBOLT
+      // Layer 1: Rotating torus field
+      const angle1 = norm * Math.PI * 2 + time * 0.4
+      const angle2 = norm * Math.PI * 4 + time * 0.6
+      const torusRadius = 2 + Math.sin(time * 0.3 + norm * 10) * 0.5
+      const tubeRadius = 1 + Math.cos(time * 0.5 + norm * 8) * 0.5
+      
+      // Layer 2: Wave interference
+      const wave1 = Math.sin(norm * 20 + time * 2) * 0.3
+      const wave2 = Math.cos(norm * 15 - time * 1.5) * 0.3
+      
+      // Layer 3: Spiral flow
+      const spiralAngle = norm * Math.PI * 6 + time * 0.8
+      const spiralRadius = norm * 3
+      
+      // Combine layers for organic motion
+      const x = (Math.cos(angle1) * (torusRadius + Math.cos(angle2) * tubeRadius)) + 
+                Math.cos(spiralAngle) * spiralRadius * 0.3 + wave1
+      const y = Math.sin(spiralAngle) * spiralRadius * 0.5 + wave2 + 
+                Math.sin(time * 0.7 + norm * 5) * 0.5
+      const z = (Math.sin(angle1) * (torusRadius + Math.cos(angle2) * tubeRadius)) + 
+                Math.sin(spiralAngle) * spiralRadius * 0.3
+      
+      // Apply with smoothing
+      const smoothFactor = 0.05
+      positionAttribute.array[i3] += (x - positionAttribute.array[i3]) * smoothFactor
+      positionAttribute.array[i3 + 1] += (y - positionAttribute.array[i3 + 1]) * smoothFactor
+      positionAttribute.array[i3 + 2] += (z - positionAttribute.array[i3 + 2]) * smoothFactor
+      
+      // Dynamic color shifts
+      const hue = 0.6 - norm * 0.2 + Math.sin(time * 0.5 + norm * 10) * 0.05
+      const lightness = 0.5 + Math.sin(time * 2 + norm * 8) * 0.2 + progressFactor * 0.2
+      const color = new THREE.Color().setHSL(hue, 0.9, lightness)
+      
+      colorAttribute.array[i3] = color.r
+      colorAttribute.array[i3 + 1] = color.g
+      colorAttribute.array[i3 + 2] = color.b
+    }
+    
+    positionAttribute.needsUpdate = true
+    colorAttribute.needsUpdate = true
+    
+    // Gentle camera rotation for depth
+    state.camera.position.x = Math.sin(time * 0.1) * 0.5
+    state.camera.position.y = Math.cos(time * 0.15) * 0.5
+    state.camera.lookAt(0, 0, 0)
   })
-
+  
   return (
-    <group ref={groupRef}>
-      {/* Core glowing sphere */}
-      <mesh ref={coreRef}>
-        <icosahedronGeometry args={[1, 1]} />
-        <meshBasicMaterial
-          color="#3b82f6"
-          transparent
-          opacity={0.8}
-          wireframe
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={particleCount}
+          array={positions}
+          itemSize={3}
         />
-      </mesh>
-
-      {/* Inner glow */}
-      <mesh scale={0.8}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial
-          color="#8b5cf6"
-          transparent
-          opacity={0.15}
+        <bufferAttribute
+          attach="attributes-color"
+          count={particleCount}
+          array={colors}
+          itemSize={3}
         />
-      </mesh>
-
-      {/* Orbiting particles */}
-      {Array.from({ length: particles }).map((_, i) => {
-        const hue = (i / particles) * 0.3 // Blue to purple range
-        const color = new THREE.Color().setHSL(0.6 - hue, 0.8, 0.6)
-        
-        return (
-          <mesh
-            key={i}
-            ref={(el) => {
-              if (el) particlesRef.current[i] = el
-            }}
-            geometry={particleGeometry}
-          >
-            <meshBasicMaterial
-              color={color}
-              transparent
-              opacity={0.7}
-            />
-          </mesh>
-        )
-      })}
-
-      {/* Outer ring glow */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} scale={2.2}>
-        <torusGeometry args={[1, 0.05, 16, 64]} />
-        <meshBasicMaterial
-          color="#ec4899"
-          transparent
-          opacity={0.3}
-        />
-      </mesh>
-
-      {/* Dynamic lights */}
-      <pointLight position={[0, 0, 0]} intensity={2} color="#3b82f6" distance={8} />
-      <pointLight position={[2, 0, 0]} intensity={1} color="#8b5cf6" distance={6} />
-      <pointLight position={[-2, 0, 0]} intensity={1} color="#ec4899" distance={6} />
-    </group>
+      </bufferGeometry>
+      <pointsMaterial
+        size={prefersReducedMotion ? 0.04 : 0.06}
+        vertexColors
+        transparent
+        opacity={0.8}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
   )
 }
 
@@ -249,119 +261,54 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden">
-      {/* Multi-layer ambient glow effects */}
+      {/* Subtle ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Blue glow - center */}
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[150px]"
           style={{
-            animation: prefersReducedMotion ? 'none' : 'pulse 4s ease-in-out infinite',
-          }}
-        />
-        {/* Purple glow - offset */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-purple-500/15 rounded-full blur-[100px]"
-          style={{
-            animation: prefersReducedMotion ? 'none' : 'pulse 4s ease-in-out infinite 1.5s',
-          }}
-        />
-        {/* Magenta glow - soft outer */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-500/10 rounded-full blur-[140px]"
-          style={{
-            animation: prefersReducedMotion ? 'none' : 'pulse 5s ease-in-out infinite 0.7s',
+            animation: prefersReducedMotion ? 'none' : 'pulse 6s ease-in-out infinite',
           }}
         />
       </div>
 
-      <div className="relative flex flex-col items-center justify-center text-center w-full px-4 z-10">
-        {/* 3D Orbital Animation */}
-        <div className="w-[350px] h-[350px] mb-8 flex items-center justify-center">
-          <Canvas 
-            camera={{ position: [0, 0, 6], fov: 50 }}
-            gl={{ 
-              antialias: true, 
-              alpha: true, 
-              powerPreference: 'high-performance'
-            }}
-            dpr={[1, 2]}
-          >
-            <OrbitingParticles progress={progress} prefersReducedMotion={prefersReducedMotion} />
-          </Canvas>
-        </div>
-        
-        {/* Loading text with animated gradient */}
-        <div className="mb-6">
-          <h2 
-            className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
-            style={{
-              animation: prefersReducedMotion ? 'none' : 'gradient-shift 3s ease infinite',
-            }}
-          >
-            {hasError ? 'Carregando versão simplificada...' : 'Carregando'}
+      {/* Particle Swarm Canvas - Full viewport */}
+      <div className="absolute inset-0">
+        <Canvas 
+          camera={{ position: [0, 0, 8], fov: 60 }}
+          gl={{ 
+            antialias: true, 
+            alpha: true, 
+            powerPreference: 'high-performance'
+          }}
+          dpr={[1, 2]}
+        >
+          <ParticleSwarm progress={progress} prefersReducedMotion={prefersReducedMotion} />
+        </Canvas>
+      </div>
+
+      {/* Minimal UI overlay */}
+      <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16 px-4">
+        {/* Clean text */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-light text-white/90 mb-1 tracking-wide">
+            {hasError ? 'Carregando versão simplificada' : 'Carregando'}
           </h2>
-          <p className="text-gray-400 text-sm">
-            Preparando experiência 3D
+          <p className="text-gray-500 text-sm font-light">
+            {loadedModels}/{CRITICAL_MODELS.length}
           </p>
         </div>
         
-        {/* Sleek progress bar */}
-        <div className="w-full max-w-sm space-y-2">
-          <div className="relative w-full h-1.5 bg-gray-900/50 rounded-full overflow-hidden backdrop-blur-sm border border-blue-500/10">
-            {/* Glow trail behind progress */}
-            <div 
-              className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 blur-md transition-all duration-700 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-            {/* Main progress bar with gradient */}
-            <div
-              className="relative h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-700 ease-out shadow-lg"
-              style={{ 
-                width: `${progress}%`,
-                boxShadow: '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)'
-              }}
-            >
-              {/* Animated shimmer */}
-              {!prefersReducedMotion && progress < 100 && (
-                <div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                  style={{
-                    animation: 'shimmer 2s infinite',
-                  }}
-                />
-              )}
-            </div>
-          </div>
-          
-          {/* Progress stats */}
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-blue-300 font-semibold tracking-wider">
-              {progress}%
-            </span>
-            <span className="text-gray-500 font-mono">
-              {loadedModels}/{CRITICAL_MODELS.length}
-            </span>
-          </div>
+        {/* Minimal progress indicator */}
+        <div className="w-48 h-0.5 bg-gray-900/50 rounded-full overflow-hidden backdrop-blur-sm">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-700 ease-out"
+            style={{ 
+              width: `${progress}%`,
+              boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)'
+            }}
+          />
         </div>
-
-        {/* Status message */}
-        {!hasError && progress < 100 && (
-          <p className="text-gray-600 text-xs mt-6 animate-pulse">
-            Carregando recursos...
-          </p>
-        )}
       </div>
-
-      <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
-        }
-        @keyframes gradient-shift {
-          0%, 100% { filter: hue-rotate(0deg); }
-          50% { filter: hue-rotate(10deg); }
-        }
-      `}</style>
     </div>
   )
 }
