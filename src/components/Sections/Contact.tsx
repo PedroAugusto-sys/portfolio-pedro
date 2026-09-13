@@ -144,7 +144,7 @@ const Contact = () => {
     <section
       id="contact"
       ref={elementRef}
-      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 overflow-visible"
+      className="relative min-h-screen py-16 px-4 sm:px-6 lg:px-8 overflow-visible"
     >
       <div ref={contentRef} className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
@@ -174,7 +174,7 @@ const Contact = () => {
                   <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text transition-all">
                     {contact.label}
                   </h3>
-                  <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors break-all">
+                  <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
                     {contact.value}
                   </p>
                 </div>

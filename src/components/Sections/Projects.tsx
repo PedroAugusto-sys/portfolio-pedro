@@ -204,7 +204,7 @@ const Projects = () => {
     <section
       id="projects"
       ref={elementRef}
-      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8"
+      className="relative min-h-screen py-16 px-4 sm:px-6 lg:px-8"
     >
       <div className="absolute inset-0 bg-gradient-radial from-purple-500/5 via-transparent to-transparent" />
       
