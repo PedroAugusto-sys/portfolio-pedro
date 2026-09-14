@@ -9,118 +9,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const projects = [
-  // Projetos em destaque - QA e Desenvolvimento
-  {
-    id: 6,
-    title: 'Automação de QA',
-    description:
-      'Projeto de automação de testes de qualidade de software desenvolvido para otimizar processos de validação e garantir a qualidade dos produtos. Inclui frameworks de automação, scripts de teste e integração com pipelines de CI/CD para execução contínua de testes.',
-    technologies: ['Selenium', 'Playwright', 'Python', 'Java', 'Test Automation', 'CI/CD'],
-    github: 'https://github.com/PedroAugusto-sys/qa_automacao',
-    image: '/images/gears.jpeg',
-    featured: true,
-  },
-  {
-    id: 7,
-    title: 'Gerador de Relatório Automático QA',
-    description:
-      'Userscript para Tampermonkey que automatiza a criação de chamados no Mantis a partir do Escolar Manager. Inclui botão flutuante arrastável, popup interativo com fluxo passo a passo, captura automática de dados da página, seleção múltipla de clientes com pesquisa e preenchimento automático de formulários no Mantis. Otimiza fluxos de trabalho de QA com interface intuitiva e tratamento de erros.',
-    technologies: ['JavaScript', 'Tampermonkey', 'Userscript', 'Automação', 'QA'],
-    github: 'https://github.com/PedroAugusto-sys/geradorRelatorioAutomaticoQA',
-    image: '/images/qa-livro.jpg',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'API de Controle Financeiro',
-    description:
-      'API REST completa para gerenciamento financeiro pessoal e em grupos. Permite cadastro de pessoas, grupos, metas financeiras, lançamentos (entradas e saídas) e geração de relatórios detalhados. Desenvolvida com Spring Boot, inclui documentação Swagger e suporte para PostgreSQL em produção.',
-    technologies: ['Java', 'Spring Boot', 'JPA/Hibernate', 'PostgreSQL', 'Swagger', 'Docker'],
-    github: 'https://github.com/PedroAugusto-sys/financas',
-    image: '/images/dinheiro.jpg',
-    featured: true,
-  },
-  {
-    id: 11,
-    title: 'TicketFlow & MailGen',
-    description:
-      'SPA React + Tailwind para gestão de tickets (CRUD em localStorage) e gerador de e-mails low-code. Funcionalidades: lista de tickets com filtro por status (Aberto, Pendente, Resolvido), criar/editar/excluir tickets, gerador de e-mail com templates customizáveis (técnico/humano) e gerenciamento de templates via interface.',
-    technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Lucide React'],
-    github: 'https://github.com/PedroAugusto-sys/ticket-flowZ',
-    preview: 'https://ticketflowz.netlify.app/',
-    image: '/images/projects/ticketflow-demo.gif',
-    featured: true,
-  },
-  {
-    id: 1,
-    title: 'EaDuck',
-    description:
-      'Plataforma educacional para gestão de ensino a distância com cadastro de usuários, salas, tarefas e avaliações. Demo pública disponível apenas com login (sem cadastro aberto).',
-    technologies: ['Java', 'TypeScript', 'Spring', 'React', 'HTML', 'SCSS'],
-    github: 'https://github.com/Usales/EaDuck',
-    preview: 'https://weaduck.netlify.app/',
-    image: '/images/projects/eaduck-demo.gif',
-    featured: true,
-  },
-  // Outros projetos
-  {
-    id: 8,
-    title: 'Mantis Timeline Monitor',
-    description:
-      'Extensão para Chrome (Manifest V3) que monitora a "Linha do Tempo" do Mantis e notifica o usuário sobre novas atividades. Inclui monitoramento automático a cada minuto, notificações do sistema, filtro por usuário, histórico de notificações ilimitado, interface popup para controle e modal de configuração inicial. Desenvolvida para otimizar o acompanhamento de atividades no Mantis Bug Tracker.',
-    technologies: ['JavaScript', 'Chrome Extension', 'Manifest V3', 'HTML', 'CSS', 'Chrome APIs'],
-    github: 'https://github.com/PedroAugusto-sys/mantis_notificator',
-    image: '/images/timeline.png',
-  },
-  {
-    id: 5,
-    title: 'Assistente de Produtividade Interno',
-    description:
-      'Extensão do Chrome desenvolvida para automatizar tarefas repetitivas no sistema EscolarManager. Permite que usuários autorizados configurem acesso seguro via tokens locais, eliminando a necessidade de inserir credenciais manualmente a cada sessão. Focado em produtividade e usabilidade, com armazenamento local seguro, interface intuitiva e atalho de teclado para ativação rápida.',
-    technologies: ['JavaScript', 'Chrome Extension', 'HTML', 'CSS', 'Chrome APIs'],
-    github: 'https://github.com/PedroAugusto-sys/Assistente-Escolar',
-    image: '/images/credencial.png',
-  },
-  {
-    id: 4,
-    title: 'Sistema de Análise Educacional',
-    description:
-      'Solução completa para monitoramento e análise de dados educacionais com backend em FastAPI e frontend em Streamlit. Sistema de Big Data que oferece visualização de desempenho acadêmico, controle de frequência, acompanhamento de tarefas e monitoramento de comunicações. Inclui pipeline ETL com Pandas para processamento e transformação de dados educacionais.',
-    technologies: ['Python', 'FastAPI', 'Streamlit', 'MongoDB', 'Pandas', 'Big Data'],
-    github: 'https://github.com/PedroAugusto-sys/bigdata',
-    image: '/images/educacional.png',
-  },
-  {
-    id: 9,
-    title: 'Sistema de Mensageria Local',
-    description:
-      'Sistema completo de mensageria para rede local com funcionalidades avançadas de chat em tempo real. Inclui autenticação JWT, chat em tempo real via Socket.IO, criação de grupos, upload de arquivos e imagens, fotos de perfil personalizáveis, edição e exclusão de mensagens, indicadores de leitura, busca de conversas e interface responsiva. Desenvolvido com TypeScript, Node.js e SQLite para comunicação interna em empresas.',
-    technologies: ['TypeScript', 'JavaScript', 'Node.js', 'Socket.IO', 'JWT', 'SQLite', 'HTML', 'CSS'],
-    github: 'https://github.com/PedroAugusto-sys/sistema_mensageria_praempresa',
-    image: '/images/bubble_speech.png',
-  },
-  {
-    id: 3,
-    title: 'Crust-Delivery',
-    description:
-      'Sistema de delivery desenvolvido como projeto integrador do 6° período do SENAI. Plataforma completa para gestão de entregas com backend em Java, incluindo gerenciamento de pedidos, rotas e dados de entrega. Projeto acadêmico focado em aplicação prática de conceitos de desenvolvimento de software.',
-    technologies: ['Java', 'Spring Boot', 'Backend', 'API REST'],
-    github: 'https://github.com/PedroAugusto-sys/Crust-Delivery',
-    image: '/images/delivery.png',
-  },
-  {
-    id: 10,
-    title: 'Sistema de Vendas (Local)',
-    description:
-      'Sistema de vendas local em Python com interface PySide6. Permite cadastrar produtos, clientes e registrar vendas. Dados persistidos em JSON (products.json e clients.json), com estrutura organizada em managers, models, relatórios e interface gráfica. Requer Python 3.10+ e roda em Windows, macOS ou Linux.',
-    technologies: ['Python', 'PySide6', 'JSON', 'Desktop'],
-    github: 'https://github.com/PedroAugusto-sys/sistema-venda-py',
-    image: '/images/dinheiro.jpg',
-  },
-]
-
-
 const Projects = () => {
   const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
@@ -130,6 +18,104 @@ const Projects = () => {
   })
   const { animateIn } = useGSAP()
   const animationsCreatedRef = useRef(false)
+  
+  const projects = [
+    {
+      id: 6,
+      titleKey: 'projects.project6.title',
+      descriptionKey: 'projects.project6.description',
+      technologies: ['Selenium', 'Playwright', 'Python', 'Java', 'Test Automation', 'CI/CD'],
+      github: 'https://github.com/PedroAugusto-sys/qa_automacao',
+      image: '/images/gears.jpeg',
+      featured: true,
+    },
+    {
+      id: 7,
+      titleKey: 'projects.project7.title',
+      descriptionKey: 'projects.project7.description',
+      technologies: ['JavaScript', 'Tampermonkey', 'Userscript', 'Automação', 'QA'],
+      github: 'https://github.com/PedroAugusto-sys/geradorRelatorioAutomaticoQA',
+      image: '/images/qa-livro.jpg',
+      featured: true,
+    },
+    {
+      id: 2,
+      titleKey: 'projects.project2.title',
+      descriptionKey: 'projects.project2.description',
+      technologies: ['Java', 'Spring Boot', 'JPA/Hibernate', 'PostgreSQL', 'Swagger', 'Docker'],
+      github: 'https://github.com/PedroAugusto-sys/financas',
+      image: '/images/dinheiro.jpg',
+      featured: true,
+    },
+    {
+      id: 11,
+      titleKey: 'projects.project11.title',
+      descriptionKey: 'projects.project11.description',
+      technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion', 'Lucide React'],
+      github: 'https://github.com/PedroAugusto-sys/ticket-flowZ',
+      preview: 'https://ticketflowz.netlify.app/',
+      image: '/images/projects/ticketflow-demo.gif',
+      featured: true,
+    },
+    {
+      id: 1,
+      titleKey: 'projects.project1.title',
+      descriptionKey: 'projects.project1.description',
+      technologies: ['Java', 'TypeScript', 'Spring', 'React', 'HTML', 'SCSS'],
+      github: 'https://github.com/Usales/EaDuck',
+      preview: 'https://weaduck.netlify.app/',
+      image: '/images/projects/eaduck-demo.gif',
+      featured: true,
+    },
+    {
+      id: 8,
+      titleKey: 'projects.project8.title',
+      descriptionKey: 'projects.project8.description',
+      technologies: ['JavaScript', 'Chrome Extension', 'Manifest V3', 'HTML', 'CSS', 'Chrome APIs'],
+      github: 'https://github.com/PedroAugusto-sys/mantis_notificator',
+      image: '/images/timeline.png',
+    },
+    {
+      id: 5,
+      titleKey: 'projects.project5.title',
+      descriptionKey: 'projects.project5.description',
+      technologies: ['JavaScript', 'Chrome Extension', 'HTML', 'CSS', 'Chrome APIs'],
+      github: 'https://github.com/PedroAugusto-sys/Assistente-Escolar',
+      image: '/images/credencial.png',
+    },
+    {
+      id: 4,
+      titleKey: 'projects.project4.title',
+      descriptionKey: 'projects.project4.description',
+      technologies: ['Python', 'FastAPI', 'Streamlit', 'MongoDB', 'Pandas', 'Big Data'],
+      github: 'https://github.com/PedroAugusto-sys/bigdata',
+      image: '/images/educacional.png',
+    },
+    {
+      id: 9,
+      titleKey: 'projects.project9.title',
+      descriptionKey: 'projects.project9.description',
+      technologies: ['TypeScript', 'JavaScript', 'Node.js', 'Socket.IO', 'JWT', 'SQLite', 'HTML', 'CSS'],
+      github: 'https://github.com/PedroAugusto-sys/sistema_mensageria_praempresa',
+      image: '/images/bubble_speech.png',
+    },
+    {
+      id: 3,
+      titleKey: 'projects.project3.title',
+      descriptionKey: 'projects.project3.description',
+      technologies: ['Java', 'Spring Boot', 'Backend', 'API REST'],
+      github: 'https://github.com/PedroAugusto-sys/Crust-Delivery',
+      image: '/images/delivery.png',
+    },
+    {
+      id: 10,
+      titleKey: 'projects.project10.title',
+      descriptionKey: 'projects.project10.description',
+      technologies: ['Python', 'PySide6', 'JSON', 'Desktop'],
+      github: 'https://github.com/PedroAugusto-sys/sistema-venda-py',
+      image: '/images/dinheiro.jpg',
+    },
+  ]
 
   useEffect(() => {
     if (hasIntersected) {
@@ -225,8 +211,8 @@ const Projects = () => {
           {featuredProjects.map((project) => (
             <div key={project.id} className="project-card h-full flex">
               <ProjectCard
-                title={project.title}
-                description={project.description}
+                title={t(project.titleKey)}
+                description={t(project.descriptionKey)}
                 technologies={project.technologies}
                 github={project.github}
                 preview={project.preview}
@@ -252,8 +238,8 @@ const Projects = () => {
               {otherProjects.map((project) => (
                 <div key={project.id} className="project-card h-full flex">
                   <ProjectCard
-                    title={project.title}
-                    description={project.description}
+                    title={t(project.titleKey)}
+                    description={t(project.descriptionKey)}
                     technologies={project.technologies}
                     github={project.github}
                     preview={project.preview}

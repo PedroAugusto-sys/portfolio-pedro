@@ -71,6 +71,50 @@ const translations = {
     'projects.code': 'Ver Código',
     'projects.placeholder': 'Projeto',
     
+    // Project 1 - EaDuck
+    'projects.project1.title': 'EaDuck',
+    'projects.project1.description': 'Plataforma educacional para gestão de ensino a distância com cadastro de usuários, salas, tarefas e avaliações. Demo pública disponível apenas com login (sem cadastro aberto).',
+    
+    // Project 2 - API de Controle Financeiro
+    'projects.project2.title': 'API de Controle Financeiro',
+    'projects.project2.description': 'API REST completa para gerenciamento financeiro pessoal e em grupos. Permite cadastro de pessoas, grupos, metas financeiras, lançamentos (entradas e saídas) e geração de relatórios detalhados. Desenvolvida com Spring Boot, inclui documentação Swagger e suporte para PostgreSQL em produção.',
+    
+    // Project 3 - Crust-Delivery
+    'projects.project3.title': 'Crust-Delivery',
+    'projects.project3.description': 'Sistema de delivery desenvolvido como projeto integrador do 6° período do SENAI. Plataforma completa para gestão de entregas com backend em Java, incluindo gerenciamento de pedidos, rotas e dados de entrega. Projeto acadêmico focado em aplicação prática de conceitos de desenvolvimento de software.',
+    
+    // Project 4 - Sistema de Análise Educacional
+    'projects.project4.title': 'Sistema de Análise Educacional',
+    'projects.project4.description': 'Solução completa para monitoramento e análise de dados educacionais com backend em FastAPI e frontend em Streamlit. Sistema de Big Data que oferece visualização de desempenho acadêmico, controle de frequência, acompanhamento de tarefas e monitoramento de comunicações. Inclui pipeline ETL com Pandas para processamento e transformação de dados educacionais.',
+    
+    // Project 5 - Assistente de Produtividade Interno
+    'projects.project5.title': 'Assistente de Produtividade Interno',
+    'projects.project5.description': 'Extensão do Chrome desenvolvida para automatizar tarefas repetitivas no sistema EscolarManager. Permite que usuários autorizados configurem acesso seguro via tokens locais, eliminando a necessidade de inserir credenciais manualmente a cada sessão. Focado em produtividade e usabilidade, com armazenamento local seguro, interface intuitiva e atalho de teclado para ativação rápida.',
+    
+    // Project 6 - Automação de QA
+    'projects.project6.title': 'Automação de QA',
+    'projects.project6.description': 'Projeto de automação de testes de qualidade de software desenvolvido para otimizar processos de validação e garantir a qualidade dos produtos. Inclui frameworks de automação, scripts de teste e integração com pipelines de CI/CD para execução contínua de testes.',
+    
+    // Project 7 - Gerador de Relatório Automático QA
+    'projects.project7.title': 'Gerador de Relatório Automático QA',
+    'projects.project7.description': 'Userscript para Tampermonkey que automatiza a criação de chamados no Mantis a partir do Escolar Manager. Inclui botão flutuante arrastável, popup interativo com fluxo passo a passo, captura automática de dados da página, seleção múltipla de clientes com pesquisa e preenchimento automático de formulários no Mantis. Otimiza fluxos de trabalho de QA com interface intuitiva e tratamento de erros.',
+    
+    // Project 8 - Mantis Timeline Monitor
+    'projects.project8.title': 'Mantis Timeline Monitor',
+    'projects.project8.description': 'Extensão para Chrome (Manifest V3) que monitora a "Linha do Tempo" do Mantis e notifica o usuário sobre novas atividades. Inclui monitoramento automático a cada minuto, notificações do sistema, filtro por usuário, histórico de notificações ilimitado, interface popup para controle e modal de configuração inicial. Desenvolvida para otimizar o acompanhamento de atividades no Mantis Bug Tracker.',
+    
+    // Project 9 - Sistema de Mensageria Local
+    'projects.project9.title': 'Sistema de Mensageria Local',
+    'projects.project9.description': 'Sistema completo de mensageria para rede local com funcionalidades avançadas de chat em tempo real. Inclui autenticação JWT, chat em tempo real via Socket.IO, criação de grupos, upload de arquivos e imagens, fotos de perfil personalizáveis, edição e exclusão de mensagens, indicadores de leitura, busca de conversas e interface responsiva. Desenvolvido com TypeScript, Node.js e SQLite para comunicação interna em empresas.',
+    
+    // Project 10 - Sistema de Vendas (Local)
+    'projects.project10.title': 'Sistema de Vendas (Local)',
+    'projects.project10.description': 'Sistema de vendas local em Python com interface PySide6. Permite cadastrar produtos, clientes e registrar vendas. Dados persistidos em JSON (products.json e clients.json), com estrutura organizada em managers, models, relatórios e interface gráfica. Requer Python 3.10+ e roda em Windows, macOS ou Linux.',
+    
+    // Project 11 - TicketFlow & MailGen
+    'projects.project11.title': 'TicketFlow & MailGen',
+    'projects.project11.description': 'SPA React + Tailwind para gestão de tickets (CRUD em localStorage) e gerador de e-mails low-code. Funcionalidades: lista de tickets com filtro por status (Aberto, Pendente, Resolvido), criar/editar/excluir tickets, gerador de e-mail com templates customizáveis (técnico/humano) e gerenciamento de templates via interface.',
+    
     // Contact
     'contact.title': 'Entre em',
     'contact.title.highlight': 'Contato',
@@ -144,6 +188,50 @@ const translations = {
     'projects.demo': 'View Demo',
     'projects.code': 'View Code',
     'projects.placeholder': 'Project',
+    
+    // Project 1 - EaDuck
+    'projects.project1.title': 'EaDuck',
+    'projects.project1.description': 'Educational platform for distance learning management with user registration, classrooms, assignments, and assessments. Public demo available with login only (no open registration).',
+    
+    // Project 2 - Financial Control API
+    'projects.project2.title': 'Financial Control API',
+    'projects.project2.description': 'Complete REST API for personal and group financial management. Features user registration, groups, financial goals, transactions (income and expenses), and detailed report generation. Built with Spring Boot, includes Swagger documentation and PostgreSQL support in production.',
+    
+    // Project 3 - Crust-Delivery
+    'projects.project3.title': 'Crust-Delivery',
+    'projects.project3.description': 'Delivery system developed as an integrative project for the 6th semester at SENAI. Complete platform for delivery management with Java backend, including order management, routes, and delivery data. Academic project focused on practical application of software development concepts.',
+    
+    // Project 4 - Educational Analysis System
+    'projects.project4.title': 'Educational Analysis System',
+    'projects.project4.description': 'Complete solution for monitoring and analyzing educational data with FastAPI backend and Streamlit frontend. Big Data system offering academic performance visualization, attendance tracking, task monitoring, and communication oversight. Includes ETL pipeline with Pandas for processing and transforming educational data.',
+    
+    // Project 5 - Internal Productivity Assistant
+    'projects.project5.title': 'Internal Productivity Assistant',
+    'projects.project5.description': 'Chrome extension developed to automate repetitive tasks in the EscolarManager system. Allows authorized users to configure secure access via local tokens, eliminating the need to manually enter credentials each session. Focused on productivity and usability, with secure local storage, intuitive interface, and keyboard shortcut for quick activation.',
+    
+    // Project 6 - QA Automation
+    'projects.project6.title': 'QA Automation',
+    'projects.project6.description': 'Software quality test automation project developed to optimize validation processes and ensure product quality. Includes automation frameworks, test scripts, and CI/CD pipeline integration for continuous test execution.',
+    
+    // Project 7 - Automatic QA Report Generator
+    'projects.project7.title': 'Automatic QA Report Generator',
+    'projects.project7.description': 'Tampermonkey userscript that automates ticket creation in Mantis from Escolar Manager. Features draggable floating button, interactive popup with step-by-step flow, automatic page data capture, multiple client selection with search, and automatic Mantis form filling. Optimizes QA workflows with intuitive interface and error handling.',
+    
+    // Project 8 - Mantis Timeline Monitor
+    'projects.project8.title': 'Mantis Timeline Monitor',
+    'projects.project8.description': 'Chrome extension (Manifest V3) that monitors the Mantis "Timeline" and notifies users about new activities. Features automatic monitoring every minute, system notifications, user filtering, unlimited notification history, popup interface for control, and initial setup modal. Developed to optimize activity tracking in Mantis Bug Tracker.',
+    
+    // Project 9 - Local Messaging System
+    'projects.project9.title': 'Local Messaging System',
+    'projects.project9.description': 'Complete messaging system for local networks with advanced real-time chat features. Includes JWT authentication, real-time chat via Socket.IO, group creation, file and image uploads, customizable profile photos, message editing and deletion, read receipts, conversation search, and responsive interface. Built with TypeScript, Node.js, and SQLite for internal company communication.',
+    
+    // Project 10 - Sales System (Local)
+    'projects.project10.title': 'Sales System (Local)',
+    'projects.project10.description': 'Local sales system in Python with PySide6 interface. Allows product and customer registration and sales recording. Data persisted in JSON (products.json and clients.json), with organized structure in managers, models, reports, and graphical interface. Requires Python 3.10+ and runs on Windows, macOS, or Linux.',
+    
+    // Project 11 - TicketFlow & MailGen
+    'projects.project11.title': 'TicketFlow & MailGen',
+    'projects.project11.description': 'React SPA + Tailwind for ticket management (CRUD in localStorage) and low-code email generator. Features: ticket list with status filtering (Open, Pending, Resolved), create/edit/delete tickets, email generator with customizable templates (technical/friendly), and template management via interface.',
     
     // Contact
     'contact.title': 'Get in',
