@@ -128,22 +128,22 @@ const About = () => {
       ref={elementRef}
       className="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-radial from-white/5 via-transparent to-transparent" />
       
       <div className="max-w-7xl mx-auto relative">
         <div className="max-w-4xl mx-auto">
           <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                Sobre <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Mim</span>
+                Sobre <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Mim</span>
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full" />
+              <div className="h-1 w-24 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full" />
             </div>
 
             <div className="animate-on-scroll space-y-5 text-gray-300 text-base sm:text-lg leading-relaxed">
               <p>
                 <strong className="text-white">Engenheiro de Software</strong> formado pela Fatesg (conclusão em 2025) com
-                sólida trajetória de <strong className="text-cyan-300">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
+                sólida trajetória de <strong className="text-white">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
                 Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e
                 Automação.
               </p>
@@ -153,7 +153,7 @@ const About = () => {
                 problemas reais do usuário.
               </p>
               <p>
-                Possuo competências em <strong className="text-blue-300">C#, React.js e automação</strong> no geral, com inglês
+                Possuo competências em <strong className="text-white">C#, React.js e automação</strong> no geral, com inglês
                 fluente para atuação em times globais. Busco aplicar minha
                 experiência em engenharia para escalar processos de testes,
                 otimizar os ciclos de desenvolvimento e de atendimento ao cliente.
@@ -162,8 +162,8 @@ const About = () => {
 
             <div className="animate-on-scroll flex justify-center mb-8">
               <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-40" />
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-blue-400/30 shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-300 to-gray-500 rounded-full blur-xl opacity-40" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
                   <img
                     src="/images/face.png"
                     alt="Pedro Augusto - Engenheiro de Software"
@@ -178,18 +178,18 @@ const About = () => {
                 <h3 className="text-2xl sm:text-3xl font-bold text-white">
                   Tecnologias
                 </h3>
-                <div className="h-1 flex-1 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-purple-500/30 rounded-full" />
+                <div className="h-1 flex-1 bg-gradient-to-r from-white/30 via-gray-400/30 to-gray-600/30 rounded-full" />
               </div>
               {Object.entries(skillsGroups).map(([category, skills]) => (
                 <div key={category} className="space-y-3">
-                  <h4 className="text-cyan-300 font-semibold text-sm uppercase tracking-wider">
+                  <h4 className="text-white font-semibold text-sm uppercase tracking-wider">
                     {category}
                   </h4>
                   <div className="flex flex-wrap gap-3">
                     {skills.map((skill, index) => (
                       <span
                         key={skill}
-                        className="skill-chip px-4 py-2 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20 text-cyan-200 rounded-xl font-medium text-sm border border-cyan-400/20 backdrop-blur-sm shadow-lg hover:shadow-cyan-500/20 transition-shadow cursor-default"
+                        className="skill-chip px-4 py-2 bg-gradient-to-br from-white/20 via-gray-400/20 to-gray-600/20 text-white rounded-xl font-medium text-sm border border-white/20 backdrop-blur-sm shadow-lg hover:shadow-white/20 transition-shadow cursor-default"
                         style={{
                           animationDelay: `${index * 0.1}s`
                         }}

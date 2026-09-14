@@ -158,9 +158,9 @@ const Achievements = () => {
         {/* Título */}
         <div className="text-center mb-12 animate-on-scroll">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Conquistas e <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Marcos</span>
+            Conquistas e <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Marcos</span>
           </h2>
-          <div className="h-1 w-24 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto mb-4" />
+          <div className="h-1 w-24 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full mx-auto mb-4" />
           <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
             Principais conquistas profissionais e habilidades técnicas
           </p>
@@ -175,12 +175,12 @@ const Achievements = () => {
                 ref={(el) => {
                   statsRefs.current[index] = el
                 }}
-                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm border border-blue-500/20 rounded-xl p-6 text-center animate-on-scroll 
+                className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm border border-white/20 rounded-xl p-6 text-center animate-on-scroll 
                            transition-all duration-300 ease-out
-                           hover:scale-105 hover:border-blue-400/40 hover:shadow-lg hover:shadow-blue-500/20
+                           hover:scale-105 hover:border-white/40 hover:shadow-lg hover:shadow-white/20
                            cursor-pointer group"
               >
-                <div className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-2
                               transition-all duration-300 
                               group-hover:scale-110">
                   {displayValues[index]}{stat.value.replace(/\d+/g, '')}
@@ -203,20 +203,20 @@ const Achievements = () => {
               className="flex gap-6 animate-on-scroll group cursor-pointer transition-all duration-300 ease-out hover:translate-x-2"
             >
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white to-gray-400 flex items-center justify-center text-black font-bold
                               transition-all duration-300 ease-out
-                              group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/50">
+                              group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-white/50">
                   {index + 1}
                 </div>
                 {index < achievements.length - 1 && (
-                  <div className="w-0.5 h-full bg-gray-700 mx-auto mt-2 transition-colors duration-300 group-hover:bg-purple-500/50" />
+                  <div className="w-0.5 h-full bg-gray-700 mx-auto mt-2 transition-colors duration-300 group-hover:bg-white/50" />
                 )}
               </div>
               <div className="flex-1 pb-6 p-4 rounded-lg transition-all duration-300 ease-out hover:bg-gray-900/50 hover:shadow-lg">
-                <div className="text-blue-400 text-sm font-semibold mb-1 transition-all duration-300 group-hover:text-purple-400">
+                <div className="text-white text-sm font-semibold mb-1 transition-all duration-300 group-hover:text-gray-300">
                   {achievement.year}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-blue-300">
+                <h3 className="text-xl font-bold text-white mb-2 transition-all duration-300 group-hover:text-gray-200">
                   {achievement.title}
                 </h3>
                 <p className="text-gray-400 transition-colors duration-300 group-hover:text-gray-300">

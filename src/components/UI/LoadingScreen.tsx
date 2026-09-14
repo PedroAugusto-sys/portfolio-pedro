@@ -72,9 +72,9 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
         positions[i3 + 1] = pos4D.y * scale
         positions[i3 + 2] = pos4D.z * scale
         
-        // Color: magenta → cyan along edge
-        const hue = 0.85 - t * 0.3 // 0.85 (magenta) → 0.55 (cyan)
-        const color = new THREE.Color().setHSL(hue, 1.0, 0.6)
+        // Color: white → gray along edge (B&W)
+        const lightness = 1.0 - t * 0.4 // 1.0 (white) → 0.6 (gray)
+        const color = new THREE.Color().setHSL(0, 0, lightness) // Grayscale
         colors[i3] = color.r
         colors[i3 + 1] = color.g
         colors[i3 + 2] = color.b
@@ -155,10 +155,10 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
         positionAttribute.array[i3 + 1] = pos4D.y * scale * 1.5
         positionAttribute.array[i3 + 2] = pos4D.z * scale * 1.5
         
-        // Dynamic color with breathing intensity
-        const hue = 0.85 - t * 0.3 + Math.sin(time * 0.8 + t * 5) * 0.05
-        const lightness = 0.6 + Math.sin(time * 1.5 + t * 10) * 0.15
-        const color = new THREE.Color().setHSL(hue, 1.0, lightness)
+        // Dynamic color with breathing intensity (B&W)
+        const baseLightness = 1.0 - t * 0.4
+        const lightness = baseLightness + Math.sin(time * 1.5 + t * 10) * 0.15
+        const color = new THREE.Color().setHSL(0, 0, Math.max(0.3, Math.min(1.0, lightness))) // Grayscale
         
         colorAttribute.array[i3] = color.r
         colorAttribute.array[i3 + 1] = color.g
@@ -329,7 +329,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       {/* Subtle bloom glow in void */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/3 rounded-full blur-[120px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-[120px]"
           style={{
             animation: prefersReducedMotion ? 'none' : 'pulse 8s ease-in-out infinite',
           }}
@@ -365,7 +365,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         {/* Minimal progress line */}
         <div className="w-32 h-px bg-gray-900/30 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 transition-all duration-700 ease-out"
+            className="h-full bg-gradient-to-r from-white via-gray-400 to-gray-600 transition-all duration-700 ease-out"
             style={{ 
               width: `${progress}%`,
               boxShadow: '0 0 8px rgba(236, 72, 153, 0.4)'
