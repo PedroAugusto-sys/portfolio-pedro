@@ -5,6 +5,7 @@ import { trackSectionView } from '../../utils/analytics'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
 import { useTypingAnimation } from '../../hooks/useTypingAnimation'
 import { useMobile } from '../../hooks/useMobile'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -19,6 +20,7 @@ const Hero = () => {
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const { scrollTo } = useSmoothScroll()
   const isMobile = useMobile()
+  const { t } = useLanguage()
   
   const [greeting, setGreeting] = useState('')
   const [showNameAnimation, setShowNameAnimation] = useState(false)
@@ -33,7 +35,7 @@ const Hero = () => {
   })
 
   useEffect(() => {
-    const greetingText = 'Olá, eu sou o '
+    const greetingText = t('hero.greeting')
     let currentIndex = 0
 
     const typingInterval = setInterval(() => {
@@ -47,7 +49,7 @@ const Hero = () => {
     }, 100)
 
     return () => clearInterval(typingInterval)
-  }, [])
+  }, [t])
 
   useEffect(() => {
     trackSectionView('hero')
@@ -357,7 +359,7 @@ const Hero = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-white/10 to-gray-400/10 border border-white/30 backdrop-blur-sm">
               <div className="w-2 h-2 rounded-full bg-white animate-pulse shadow-lg shadow-white/50" />
               <span className="text-sm font-medium bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Disponível para Oportunidades
+                {t('hero.available')}
               </span>
             </div>
             
@@ -378,10 +380,10 @@ const Hero = () => {
               )}
               </h1>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
-                Pedro Augusto Santos Andrade
+                {t('hero.fullName')}
               </div>
               <div className="text-base sm:text-lg text-gray-400/70 font-medium">
-                QA Automation • SDET • Engenheiro de Software
+                {t('hero.role1')} • {t('hero.role2')} • {t('hero.role3')}
               </div>
             </div>
             
@@ -389,8 +391,7 @@ const Hero = () => {
               ref={subtitleRef}
               className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0"
             >
-              Desenvolvedor Full Stack com foco em Engenharia de Qualidade. 
-              Trajetória multidisciplinar em Automação de QA, SDET e Suporte Técnico.
+              {t('hero.description')}
             </p>
             
             <div 
@@ -409,7 +410,7 @@ const Hero = () => {
                 className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-white via-gray-200 to-gray-300 text-black rounded-xl font-semibold hover:from-gray-100 hover:via-gray-300 hover:to-gray-400 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-white/25 hover:shadow-xl hover:shadow-white/40"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Ver Projetos
+                {t('hero.cta.projects')}
               </button>
               <button
                 onClick={(e) => {
@@ -423,7 +424,7 @@ const Hero = () => {
                 className="w-full sm:w-auto px-8 py-3.5 border-2 border-white/30 text-white rounded-xl font-semibold hover:border-white/60 hover:bg-white/10 backdrop-blur-sm transition-all"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Entrar em Contato
+                {t('hero.cta.contact')}
               </button>
             </div>
           </div>

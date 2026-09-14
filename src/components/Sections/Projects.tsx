@@ -3,6 +3,7 @@ import ProjectCard from '../UI/ProjectCard'
 import { useGSAP } from '../../hooks/useGSAP'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -121,6 +122,7 @@ const projects = [
 
 
 const Projects = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -211,11 +213,11 @@ const Projects = () => {
       <div className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Projetos <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">em Destaque</span>
+            {t('projects.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('projects.title.highlight')}</span>
           </h2>
           <div className="h-1 w-32 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full mx-auto mb-6" />
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-            Seleção dos meus trabalhos mais impactantes em <strong className="text-white">QA Automation</strong>, <strong className="text-white">SDET</strong> e desenvolvimento full stack
+            {t('projects.subtitle.impact')} <strong className="text-white">{t('projects.subtitle.qa')}</strong>, <strong className="text-white">{t('projects.subtitle.sdet')}</strong> {t('projects.subtitle.outro')}
           </p>
         </div>
 
@@ -238,11 +240,11 @@ const Projects = () => {
           <>
             <div className="text-center mb-12">
               <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Outros <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Projetos</span>
+                {t('projects.other')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('projects.other.highlight')}</span>
               </h3>
               <div className="h-1 w-24 bg-gradient-to-r from-white/50 via-gray-300/50 to-gray-500/50 rounded-full mx-auto mb-4" />
               <p className="text-gray-400 text-sm sm:text-base">
-                Projetos adicionais e experimentais
+                {t('projects.other.subtitle')}
               </p>
             </div>
 

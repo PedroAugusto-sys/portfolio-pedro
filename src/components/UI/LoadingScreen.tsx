@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { configureGLTFLoader } from '../../utils/textureLoader'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+import { useLanguage } from '../../contexts/LanguageContext'
 import * as THREE from 'three'
 
 interface BreathingTesseractProps {
@@ -222,9 +223,10 @@ const CRITICAL_MODELS = [
 ]
 
 const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
+  const { t } = useLanguage()
   const [progress, setProgress] = useState(0)
   const [loadedModels, setLoadedModels] = useState(0)
-  const [hasError, setHasError] = useState(false)
+  const [, setHasError] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
@@ -366,7 +368,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       <div className="relative z-10 flex flex-col items-center justify-end h-full pb-12 px-4">
         <div className="text-center mb-4">
           <h2 className="text-xl sm:text-2xl font-extralight text-white/80 mb-1 tracking-widest">
-            {hasError ? 'CARREGANDO' : 'CARREGANDO'}
+            {t('loader.loading').toUpperCase()}
           </h2>
           <p className="text-gray-600 text-xs font-mono tracking-wider">
             {loadedModels}/{CRITICAL_MODELS.length}

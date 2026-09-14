@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '../../hooks/useGSAP'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const Achievements = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -44,9 +46,9 @@ const Achievements = () => {
       }
 
       const statsData = [
-        { label: 'Projetos Completos', value: '10+' },
-        { label: 'Tecnologias Dominadas', value: '15+' },
-        { label: 'Anos de Experiência', value: '3+' },
+        { label: t('achievements.projects'), value: '10+' },
+        { label: t('achievements.technologies'), value: '15+' },
+        { label: t('achievements.years'), value: '3+' },
       ]
       
       const setupStatsAnimation = () => {
@@ -124,28 +126,28 @@ const Achievements = () => {
   const achievements = [
     {
       id: 1,
-      title: 'Bacharel em Engenharia de Software',
-      description: 'Formação completa em desenvolvimento de software, arquitetura de sistemas e gestão de projetos. Desenvolvendo soluções tecnológicas com qualidade e inovação.',
+      title: t('achievements.bachelor'),
+      description: t('achievements.bachelor.desc'),
       year: '2025',
     },
     {
       id: 2,
-      title: 'Analista QA Sênior',
-      description: 'Promoção na Escolar Manager assumindo responsabilidades estratégicas em automação de testes e desenvolvimento de ferramentas internas para QA e outros setores.',
+      title: t('achievements.senior'),
+      description: t('achievements.senior.desc'),
       year: '2023',
     },
     {
       id: 3,
-      title: 'Início da Carreira',
-      description: 'Suporte Técnico Nível 3 desenvolvendo scripts SQL, otimizando processos e construindo base sólida em resolução de problemas técnicos.',
+      title: t('achievements.career'),
+      description: t('achievements.career.desc'),
       year: '2022',
     },
   ]
 
   const stats = [
-    { label: 'Projetos Completos', value: '10+' },
-    { label: 'Tecnologias Dominadas', value: '15+' },
-    { label: 'Anos de Experiência', value: '3+' },
+    { label: t('achievements.projects'), value: '10+' },
+    { label: t('achievements.technologies'), value: '15+' },
+    { label: t('achievements.years'), value: '3+' },
   ]
 
   return (
@@ -158,11 +160,11 @@ const Achievements = () => {
         {/* Título */}
         <div className="text-center mb-12 animate-on-scroll">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Conquistas e <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Marcos</span>
+            {t('achievements.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('achievements.title.highlight')}</span>
           </h2>
           <div className="h-1 w-24 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full mx-auto mb-4" />
           <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
-            Principais conquistas profissionais e habilidades técnicas
+            {t('achievements.subtitle')}
           </p>
         </div>
 

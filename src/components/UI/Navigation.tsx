@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { trackEvent } from '../../utils/analytics'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
+import { useLanguage } from '../../contexts/LanguageContext'
 import LanguageToggle from './LanguageToggle'
 
 const Navigation = () => {
@@ -8,6 +9,7 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
   const { scrollTo } = useSmoothScroll()
+  const { t } = useLanguage()
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -54,11 +56,10 @@ const Navigation = () => {
   }
 
   const navItems = [
-    { id: 'hero', label: 'Início' },
-    { id: 'about', label: 'Sobre' },
-    { id: 'projects', label: 'Projetos' },
-    { id: 'achievements', label: 'Feitos' },
-    { id: 'contact', label: 'Contato' },
+    { id: 'about', label: t('nav.about') },
+    { id: 'projects', label: t('nav.projects') },
+    { id: 'achievements', label: t('nav.achievements') },
+    { id: 'contact', label: t('nav.contact') },
   ]
 
   return (

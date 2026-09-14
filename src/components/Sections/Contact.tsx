@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const Contact = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -149,11 +151,11 @@ const Contact = () => {
       <div ref={contentRef} className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Entre em <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Contato</span>
+            {t('contact.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('contact.title.highlight')}</span>
           </h2>
           <div className="h-1 w-32 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full mx-auto mb-6" />
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-            Estou sempre aberto para novas oportunidades e conversas sobre projetos interessantes
+            {t('contact.subtitle')}
           </p>
         </div>
 
@@ -187,7 +189,7 @@ const Contact = () => {
 
         <footer className="text-center border-t border-white/10 pt-8">
           <p className="text-gray-400 text-sm">
-            © 2026 <span className="text-white font-medium">Pedro Augusto Santos Andrade</span>. Todos os direitos reservados.
+            {t('contact.footer')} <span className="text-white font-medium">{t('contact.footer.name')}</span>{t('contact.footer.rights')}
           </p>
           <p className="text-gray-500 text-xs mt-2">
             Desenvolvido com React, TypeScript, Three.js, GSAP e Tailwind CSS

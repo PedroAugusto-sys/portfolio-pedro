@@ -32,14 +32,14 @@ const translations = {
     // About
     'about.title': 'Sobre',
     'about.title.highlight': 'Mim',
-    'about.intro': 'Sou Pedro Augusto, Engenheiro de Software com',
+    'about.intro': 'Engenheiro de Software formado pela Fatesg (conclusão em 2025) com sólida trajetória de',
     'about.experience': '3 anos e 8 meses',
-    'about.company': 'na Escolar Manager. Atuei como Analista de Testes Nível 3, desenvolvendo testes manuais e automatizados, suporte técnico e desenvolvimento de dashboards de gestão.',
+    'about.company': 'na Escolar Manager. Atuei como Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e Automação.',
     'about.skills.intro': 'Possuo competências em',
     'about.skills.list': 'C#, React.js e automação',
-    'about.skills.outro': 'no geral, com inglês fluente, sólidas habilidades analíticas e comunicativas, e contínua busca por aprendizado e inovação.',
+    'about.skills.outro': 'no geral, com inglês fluente para atuação em times globais. Busco aplicar minha experiência em engenharia para escalar processos de testes, otimizar os ciclos de desenvolvimento e de atendimento ao cliente.',
     'about.skills.development': 'Desenvolvimento',
-    'about.skills.qa': 'QA & Automação',
+    'about.skills.qa': 'Tecnologias',
     'about.skills.infrastructure': 'Infraestrutura',
     
     // Achievements
@@ -74,7 +74,7 @@ const translations = {
     // Contact
     'contact.title': 'Entre em',
     'contact.title.highlight': 'Contato',
-    'contact.subtitle': 'Vamos conversar sobre seu próximo projeto',
+    'contact.subtitle': 'Estou sempre aberto para novas oportunidades e conversas sobre projetos interessantes',
     'contact.footer': '© 2026',
     'contact.footer.name': 'Pedro Augusto Santos Andrade',
     'contact.footer.rights': '. Todos os direitos reservados.',
@@ -106,14 +106,14 @@ const translations = {
     // About
     'about.title': 'About',
     'about.title.highlight': 'Me',
-    'about.intro': 'I\'m Pedro Augusto, Software Engineer with',
+    'about.intro': 'Software Engineer graduated from Fatesg (completed in 2025) with a solid track record of',
     'about.experience': '3 years and 8 months',
-    'about.company': 'at Escolar Manager. I worked as a Level 3 Test Analyst, developing manual and automated tests, technical support, and management dashboards.',
+    'about.company': 'at Escolar Manager. I worked as N1, N2, and N3 Support up to the role of Quality and Automation Engineer.',
     'about.skills.intro': 'I have expertise in',
     'about.skills.list': 'C#, React.js, and automation',
-    'about.skills.outro': 'overall, with fluent English, strong analytical and communication skills, and a continuous pursuit of learning and innovation.',
+    'about.skills.outro': 'overall, with fluent English for working with global teams. I seek to apply my engineering experience to scale testing processes, optimize development cycles, and improve customer support.',
     'about.skills.development': 'Development',
-    'about.skills.qa': 'QA & Automation',
+    'about.skills.qa': 'Technologies',
     'about.skills.infrastructure': 'Infrastructure',
     
     // Achievements
@@ -148,7 +148,7 @@ const translations = {
     // Contact
     'contact.title': 'Get in',
     'contact.title.highlight': 'Touch',
-    'contact.subtitle': 'Let\'s talk about your next project',
+    'contact.subtitle': 'I\'m always open to new opportunities and conversations about interesting projects',
     'contact.footer': '© 2026',
     'contact.footer.name': 'Pedro Augusto Santos Andrade',
     'contact.footer.rights': '. All rights reserved.',

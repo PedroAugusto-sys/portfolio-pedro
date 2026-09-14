@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const About = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -104,28 +106,17 @@ const About = () => {
           <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                Sobre <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Mim</span>
+                {t('about.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('about.title.highlight')}</span>
               </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full" />
             </div>
 
             <div className="animate-on-scroll space-y-5 text-gray-300 text-base sm:text-lg leading-relaxed">
               <p>
-                <strong className="text-white">Engenheiro de Software</strong> formado pela Fatesg (conclusão em 2025) com
-                sólida trajetória de <strong className="text-white">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
-                Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e
-                Automação.
+                {t('about.intro')} <strong className="text-white">{t('about.experience')}</strong> {t('about.company')}
               </p>
               <p>
-                Neste caminho, fui desenvolvendo uma visão crítica sobre
-                o produto e garantindo entregas de alta qualidade que resolvem
-                problemas reais do usuário.
-              </p>
-              <p>
-                Possuo competências em <strong className="text-white">C#, React.js e automação</strong> no geral, com inglês
-                fluente para atuação em times globais. Busco aplicar minha
-                experiência em engenharia para escalar processos de testes,
-                otimizar os ciclos de desenvolvimento e de atendimento ao cliente.
+                {t('about.skills.intro')} <strong className="text-white">{t('about.skills.list')}</strong> {t('about.skills.outro')}
               </p>
             </div>
 
@@ -145,7 +136,7 @@ const About = () => {
             <div className="animate-on-scroll space-y-8" ref={skillsRef}>
               <div className="flex items-center gap-3 mb-8">
                 <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                  Tecnologias
+                  {t('about.skills.qa')}
                 </h3>
                 <div className="h-1 flex-1 bg-gradient-to-r from-white/30 via-gray-400/30 to-transparent rounded-full" />
               </div>
