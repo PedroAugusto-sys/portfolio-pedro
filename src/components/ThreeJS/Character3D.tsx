@@ -231,8 +231,14 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   // Escala base - AUMENTADA EM 30%
   const BASE_SCALE = isMobile ? 1.17 : 1.43 // Era 0.9 e 1.1, agora +30%
 
-  // Rastreamento do mouse/touch (funciona em mobile também)
+  // Rastreamento do mouse/touch (disable on mobile to prevent head-look yank)
   useEffect(() => {
+    // Skip mouse/touch tracking on mobile (prevent head-look from yanking torso)
+    if (isMobile) {
+      mouseRef.current = { x: 0, y: 0 }  // Keep centered
+      return
+    }
+    
     const handleMove = (event: MouseEvent | TouchEvent) => {
       let clientX = 0
       let clientY = 0
@@ -258,7 +264,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       window.removeEventListener('mousemove', handleMove)
       window.removeEventListener('touchmove', handleMove)
     }
-  }, [])
+  }, [isMobile])
 
   // Inicializar sistema de partículas
   useEffect(() => {
@@ -296,7 +302,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   }, [])
 
   // Frame loop principal
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!groupRef.current || !innerGroupRef.current) return
 
     // Usar o valor do prop scrollProgress diretamente (já calculado no Hero.tsx)
@@ -453,32 +459,51 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.15)
     innerGroupRef.current.scale.setScalar(newScale)
 
-    // 5. ROTAÇÃO Y (GIRO) - gentle idle spin only
-    const baseRotY = state.clock.elapsedTime * 0.05  // Slower
-    groupRef.current.rotation.y = baseRotY
+    // 5. ROTAÇÃO Y - fixed facing (no spin, clips provide animation)
+    groupRef.current.rotation.y = 0  // Face forward (no elapsedTime orbit)
 
-    // 6. ROTAÇÃO X - minimal
+    // 6. ROTAÇÃO X - disabled
     groupRef.current.rotation.x = 0
 
     // 7. ROTAÇÃO Z - disabled
     innerGroupRef.current.rotation.z = 0
 
-    // Idle sway removed (character stands on ground, only clip cycle animates)
-
-    // Lock horizontal root motion from animation clips (especially on mobile)
+    // Lock horizontal root motion + recenter character after animations
     // Walk/Run/Jump clips apply root motion that drifts the character
-    // Force X position to stay at target (0 on mobile, centerOffset.x on desktop)
+    // Solution: find hips by name + lock X/Z + bbox recenter every frame
     if (character) {
+      // 1. Find and lock hips bone by name (Mixamo uses mixamorigHips)
+      let hipsLocked = false
       character.traverse((child) => {
         if (child instanceof THREE.SkinnedMesh && child.skeleton) {
-          const rootBone = child.skeleton.bones[0] // Usually the root/hips bone
-          if (rootBone) {
-            // Zero out horizontal translation from animation clips
-            rootBone.position.x = 0
-            rootBone.position.z = 0
+          // Search for hips/pelvis bone by common names
+          const hipsBone = child.skeleton.bones.find(bone => {
+            const name = bone.name.toLowerCase()
+            return name.includes('hips') || 
+                   name.includes('pelvis') || 
+                   name.includes('root') ||
+                   name === 'mixamorigHips'
+          })
+          
+          if (hipsBone && !hipsLocked) {
+            // Lock hips horizontal translation (keep Y for vertical motion)
+            hipsBone.position.x = 0
+            hipsBone.position.z = 0
+            hipsBone.updateMatrixWorld(true)
+            hipsLocked = true
           }
         }
       })
+      
+      // 2. Recenter character bounding box every frame (after animation)
+      // This ensures visual center stays at origin even if clips drift
+      const box = new THREE.Box3().setFromObject(character)
+      const center = box.getCenter(new THREE.Vector3())
+      
+      // Offset character to keep visual center at local X=0 (and Z=0 if needed)
+      character.position.x += -center.x
+      character.position.z += -center.z
+      // Keep Y position alone (vertical from clips is OK)
     }
 
     // Partículas desativadas - sem trajetória colorida durante o scroll
