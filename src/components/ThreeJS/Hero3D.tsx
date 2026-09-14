@@ -37,33 +37,55 @@ const Hero3D = () => {
         }
         
         // Convert materials to grayscale for B&W theme
-        // ROOT CAUSE FIX: Remove textures to allow solid gray color
+        // ROOT CAUSE FIX: FORCE remove ALL texture maps for solid gray
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
-          materials.forEach((mat) => {
-            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              // Remove texture maps
-              if (mat.map) {
-                mat.map.dispose()
-                mat.map = null
-              }
-              if (mat.emissiveMap) {
-                mat.emissiveMap.dispose()
-                mat.emissiveMap = null
-              }
-              
-              // Set solid gray color
-              mat.color.setRGB(0.6, 0.6, 0.6)
-              mat.emissive.setRGB(0, 0, 0)
-              
-              // Increase contrast slightly for better silhouette
-              if (mat instanceof THREE.MeshStandardMaterial) {
-                mat.roughness = 0.8
-                mat.metalness = 0.1
-              }
-              
-              mat.needsUpdate = true
+          materials.forEach((mat: THREE.Material) => {
+            // Remove ALL texture maps that could carry color
+            if ('map' in mat && mat.map && typeof (mat.map as any).dispose === 'function') {
+              (mat.map as THREE.Texture).dispose()
+              mat.map = null
             }
+            if ('emissiveMap' in mat && mat.emissiveMap && typeof (mat.emissiveMap as any).dispose === 'function') {
+              (mat.emissiveMap as THREE.Texture).dispose()
+              mat.emissiveMap = null
+            }
+            if ('normalMap' in mat && mat.normalMap && typeof (mat.normalMap as any).dispose === 'function') {
+              (mat.normalMap as THREE.Texture).dispose()
+              mat.normalMap = null
+            }
+            if ('roughnessMap' in mat && mat.roughnessMap && typeof (mat.roughnessMap as any).dispose === 'function') {
+              (mat.roughnessMap as THREE.Texture).dispose()
+              mat.roughnessMap = null
+            }
+            if ('metalnessMap' in mat && mat.metalnessMap && typeof (mat.metalnessMap as any).dispose === 'function') {
+              (mat.metalnessMap as THREE.Texture).dispose()
+              mat.metalnessMap = null
+            }
+            if ('aoMap' in mat && mat.aoMap && typeof (mat.aoMap as any).dispose === 'function') {
+              (mat.aoMap as THREE.Texture).dispose()
+              mat.aoMap = null
+            }
+            
+            // Set solid gray color on all color-capable materials
+            if ('color' in mat && mat.color instanceof THREE.Color) {
+              mat.color.setRGB(0.6, 0.6, 0.6)
+            }
+            if ('emissive' in mat && mat.emissive instanceof THREE.Color) {
+              mat.emissive.setRGB(0, 0, 0)
+            }
+            
+            // Material-specific settings
+            if (mat instanceof THREE.MeshStandardMaterial) {
+              mat.roughness = 0.8
+              mat.metalness = 0.1
+            } else if (mat instanceof THREE.MeshPhongMaterial) {
+              mat.shininess = 10
+            } else if (mat instanceof THREE.MeshBasicMaterial) {
+              mat.color.setRGB(0.6, 0.6, 0.6)
+            }
+            
+            mat.needsUpdate = true
           })
         }
       }

@@ -45,8 +45,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const neckBoneRef = useRef<THREE.Bone | null>(null)
   
   // Refs para animação de scroll reverso
-  const reverseAnimationRef = useRef(0)
-  const spinVelocityRef = useRef(0)
+  // (Simplified scroll - most refs removed)
   
   // Refs para sistema de partículas
   const particlesRef = useRef<Particle[]>([])
@@ -67,33 +66,55 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         child.receiveShadow = false
         
         // Convert materials to grayscale for B&W theme
-        // ROOT CAUSE FIX: Textures (mat.map) override mat.color → remove/grayscale textures
+        // ROOT CAUSE FIX: Textures override mat.color → FORCE remove ALL texture maps
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
-          materials.forEach((mat) => {
-            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              // Remove texture maps to allow solid gray color
-              if (mat.map) {
-                mat.map.dispose()
-                mat.map = null
-              }
-              if (mat.emissiveMap) {
-                mat.emissiveMap.dispose()
-                mat.emissiveMap = null
-              }
-              
-              // Set solid gray color
-              mat.color.setRGB(0.6, 0.6, 0.6)
-              mat.emissive.setRGB(0, 0, 0)
-              
-              // Increase contrast slightly for better silhouette (StandardMaterial only)
-              if (mat instanceof THREE.MeshStandardMaterial) {
-                mat.roughness = 0.8
-                mat.metalness = 0.1
-              }
-              
-              mat.needsUpdate = true
+          materials.forEach((mat: THREE.Material) => {
+            // Force gray on ALL material types
+            if ('map' in mat && mat.map && typeof (mat.map as any).dispose === 'function') {
+              (mat.map as THREE.Texture).dispose()
+              mat.map = null
             }
+            if ('emissiveMap' in mat && mat.emissiveMap && typeof (mat.emissiveMap as any).dispose === 'function') {
+              (mat.emissiveMap as THREE.Texture).dispose()
+              mat.emissiveMap = null
+            }
+            if ('normalMap' in mat && mat.normalMap && typeof (mat.normalMap as any).dispose === 'function') {
+              (mat.normalMap as THREE.Texture).dispose()
+              mat.normalMap = null
+            }
+            if ('roughnessMap' in mat && mat.roughnessMap && typeof (mat.roughnessMap as any).dispose === 'function') {
+              (mat.roughnessMap as THREE.Texture).dispose()
+              mat.roughnessMap = null
+            }
+            if ('metalnessMap' in mat && mat.metalnessMap && typeof (mat.metalnessMap as any).dispose === 'function') {
+              (mat.metalnessMap as THREE.Texture).dispose()
+              mat.metalnessMap = null
+            }
+            if ('aoMap' in mat && mat.aoMap && typeof (mat.aoMap as any).dispose === 'function') {
+              (mat.aoMap as THREE.Texture).dispose()
+              mat.aoMap = null
+            }
+            
+            // Set solid gray color on all color-capable materials
+            if ('color' in mat && mat.color instanceof THREE.Color) {
+              mat.color.setRGB(0.6, 0.6, 0.6)
+            }
+            if ('emissive' in mat && mat.emissive instanceof THREE.Color) {
+              mat.emissive.setRGB(0, 0, 0)
+            }
+            
+            // Material-specific settings
+            if (mat instanceof THREE.MeshStandardMaterial) {
+              mat.roughness = 0.8
+              mat.metalness = 0.1
+            } else if (mat instanceof THREE.MeshPhongMaterial) {
+              mat.shininess = 10
+            } else if (mat instanceof THREE.MeshBasicMaterial) {
+              mat.color.setRGB(0.6, 0.6, 0.6)
+            }
+            
+            mat.needsUpdate = true
           })
         }
       }
@@ -316,23 +337,14 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     const scroll = scrollRef.current
     
     // ========================================
-    // ANIMAÇÃO DE SCROLL REVERSO
+    // ANIMAÇÃO DE SCROLL REVERSO - SIMPLIFIED (removed)
     // ========================================
-    const isScrollingUp = scrollDirectionRef.current === 'up'
-    const isScrollingDown = scrollDirectionRef.current === 'down'
-    
-    const targetReverse = isScrollingUp ? 1 : 0
-    reverseAnimationRef.current = THREE.MathUtils.lerp(
-      reverseAnimationRef.current,
-      targetReverse,
-      0.1
-    )
-    const reverseAmount = reverseAnimationRef.current
 
-    // Inicialização
+    // Inicialização - SIMPLIFIED FOR ON-SCREEN FRAMING
     if (!initializedRef.current) {
-      innerGroupRef.current.position.set(centerOffset.x, centerOffset.y + 2, centerOffset.z)
-      innerGroupRef.current.scale.setScalar(BASE_SCALE * 0.8)
+      // Start at center, slightly below middle for better framing
+      innerGroupRef.current.position.set(centerOffset.x, centerOffset.y - 0.5, centerOffset.z)
+      innerGroupRef.current.scale.setScalar(BASE_SCALE * 0.7)  // Smaller initial scale to fit in frame
       innerGroupRef.current.rotation.set(0, 0, 0)
       groupRef.current.rotation.set(0, 0, 0)
       initializedRef.current = true
@@ -343,7 +355,6 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     }
 
     // Glow mantém intensidade constante (sem mudança de cor no scroll)
-    const speed = scrollVelocityRef.current
     glowIntensityRef.current = THREE.MathUtils.lerp(glowIntensityRef.current, 0.5, 0.1)
 
     // ========================================
@@ -395,90 +406,63 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     }
 
     // ========================================
-    // ANIMAÇÕES BASEADAS NO SCROLL
+    // ANIMAÇÕES BASEADAS NO SCROLL - SIMPLIFIED TO KEEP ON-SCREEN
     // ========================================
 
-    // 1. QUEDA/SUBIDA VERTICAL - CORRIGIDO para funcionar
-    const fallStartY = centerOffset.y + 2
-    const fallEndY = centerOffset.y - (isMobile ? 4 : 6)
-    const fallDistance = fallStartY - fallEndY
+    // DISABLE aggressive transforms until Idle is visually confirmed
+    // Keep character stable and visible at scroll=0
     
-    // Usar scroll diretamente sem easing para movimento mais responsivo
-    // Easing pode ser adicionado depois se necessário
-    const targetY = fallStartY - (scroll * fallDistance)
+    // 1. VERTICAL - minimal movement, stay centered
+    const targetY = centerOffset.y - 0.5 - (scroll * 2)  // Gentle drop, starts visible
+    
+    // 2. LATERAL - disabled for now
+    const targetX = centerOffset.x
+    
+    // 3. DEPTH - minimal
+    const targetZ = centerOffset.z - (scroll * 0.5)
 
-    // 2. MOVIMENTO LATERAL
-    const lateralDirection = isScrollingUp ? -1 : 1
-    const targetX = centerOffset.x + (scroll * 1.5 * lateralDirection)
+    // Aplicar posições com lerp suave
+    innerGroupRef.current.position.y = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.y,
+      targetY,
+      0.1
+    )
+    innerGroupRef.current.position.x = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.x,
+      targetX,
+      0.1
+    )
+    innerGroupRef.current.position.z = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.z,
+      targetZ,
+      0.1
+    )
 
-    // 3. MOVIMENTO DE PROFUNDIDADE
-    const depthDirection = isScrollingUp ? 1 : -1
-    const targetZ = centerOffset.z + (scroll * 1.0 * depthDirection)
-
-    // Aplicar posições - TODAS DIRETAS para resposta imediata (sem lerp)
-    innerGroupRef.current.position.y = targetY
-    innerGroupRef.current.position.x = targetX
-    innerGroupRef.current.position.z = targetZ
-
-    // 4. ESCALA
-    const minScale = BASE_SCALE * 0.8
-    const maxScale = BASE_SCALE * 1.3
-    const scaleBonus = isScrollingUp ? 0.2 : 0
-    const targetScale = minScale + (scroll * (maxScale - minScale)) + scaleBonus * reverseAmount
+    // 4. ESCALA - keep stable
+    const targetScale = BASE_SCALE * 0.7  // Fixed scale for framing
     
     const currentScale = innerGroupRef.current.scale.x
     const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.15)
     innerGroupRef.current.scale.setScalar(newScale)
 
-    // 5. ROTAÇÃO Y (GIRO)
-    const baseRotY = state.clock.elapsedTime * 0.1
-    
-    if (isScrollingDown) {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, speed * 0.5, 0.1)
-    } else if (isScrollingUp) {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, -speed * 0.8, 0.1)
-    } else {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, 0, 0.05)
-    }
-    
-    const scrollRotY = scroll * Math.PI * 2 * (1 - reverseAmount * 2)
-    groupRef.current.rotation.y = baseRotY + scrollRotY + spinVelocityRef.current
+    // 5. ROTAÇÃO Y (GIRO) - gentle idle spin only
+    const baseRotY = state.clock.elapsedTime * 0.05  // Slower
+    groupRef.current.rotation.y = baseRotY
 
-    // 6. ROTAÇÃO X (INCLINAÇÃO)
-    const tiltDirection = isScrollingUp ? -0.3 : 0.4
-    const targetRotX = scroll * Math.PI * tiltDirection
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(
-      groupRef.current.rotation.x,
-      targetRotX,
-      0.15
-    )
+    // 6. ROTAÇÃO X - minimal
+    groupRef.current.rotation.x = 0
 
-    // 7. ROTAÇÃO Z (CAMBALHOTA)
-    const rollDirection = isScrollingUp ? -0.4 : 0.6
-    const targetRotZ = scroll * Math.PI * rollDirection
-    innerGroupRef.current.rotation.z = THREE.MathUtils.lerp(
-      innerGroupRef.current.rotation.z,
-      targetRotZ,
-      0.15
-    )
+    // 7. ROTAÇÃO Z - disabled
+    innerGroupRef.current.rotation.z = 0
 
-    // 8. BALANÇO SUAVE (quando parado)
-    if (scroll < 0.1 && scrollDirectionRef.current === 'idle') {
-      const idleSwayY = Math.sin(state.clock.elapsedTime * 2) * 0.05
-      const idleSwayX = Math.cos(state.clock.elapsedTime * 1.5) * 0.03
+    // 8. BALANÇO SUAVE (idle sway)
+    if (scroll < 0.1) {
+      const idleSwayY = Math.sin(state.clock.elapsedTime * 2) * 0.02
+      const idleSwayX = Math.cos(state.clock.elapsedTime * 1.5) * 0.01
       innerGroupRef.current.position.y += idleSwayY
       innerGroupRef.current.position.x += idleSwayX
       
-      glowIntensityRef.current = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.2
-    }
-
-    // 9. EFEITO DE "RECUPERAÇÃO" AO SUBIR
-    if (isScrollingUp && scroll > 0.1) {
-      groupRef.current.rotation.x *= 0.95
-      innerGroupRef.current.rotation.z *= 0.95
-      
-      const heroicPose = reverseAmount * 0.1
-      innerGroupRef.current.scale.x = newScale * (1 + heroicPose)
+      glowIntensityRef.current = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.1
     }
 
     // Partículas desativadas - sem trajetória colorida durante o scroll
