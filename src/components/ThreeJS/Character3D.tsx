@@ -53,6 +53,49 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const particlesMaterialRef = useRef<THREE.PointsMaterial | null>(null)
   const particlesSystemRef = useRef<THREE.Points | null>(null)
 
+  // Helper function to convert texture to grayscale canvas
+  const convertTextureToGrayscale = (texture: THREE.Texture): THREE.CanvasTexture => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    if (!ctx) return new THREE.CanvasTexture(canvas)
+    
+    // Use texture image if available
+    const image = texture.image
+    if (!image) return new THREE.CanvasTexture(canvas)
+    
+    canvas.width = image.width || 512
+    canvas.height = image.height || 512
+    
+    // Draw original image
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+    
+    // Get image data and desaturate
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+    
+    for (let i = 0; i < data.length; i += 4) {
+      // Calculate luminance (weighted grayscale)
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114
+      data[i] = gray     // R
+      data[i + 1] = gray // G
+      data[i + 2] = gray // B
+      // Keep alpha (data[i + 3]) unchanged
+    }
+    
+    ctx.putImageData(imageData, 0, 0)
+    
+    // Create new texture from grayscale canvas
+    const grayscaleTexture = new THREE.CanvasTexture(canvas)
+    grayscaleTexture.wrapS = texture.wrapS
+    grayscaleTexture.wrapT = texture.wrapT
+    grayscaleTexture.minFilter = texture.minFilter
+    grayscaleTexture.magFilter = texture.magFilter
+    grayscaleTexture.needsUpdate = true
+    
+    return grayscaleTexture
+  }
+
   // Clonar e preparar o personagem - USAR SkeletonUtils.clone para preservar animações
   const character = useMemo(() => {
     // Use SkeletonUtils.clone for proper skinned mesh animation binding
@@ -65,53 +108,53 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         child.castShadow = false
         child.receiveShadow = false
         
-        // Convert materials to grayscale for B&W theme
-        // ROOT CAUSE FIX: Textures override mat.color → FORCE remove ALL texture maps
+        // Convert materials to B&W - KEEP TEXTURE DETAIL, DESATURATE PIXELS
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((mat: THREE.Material) => {
-            // Force gray on ALL material types
-            if ('map' in mat && mat.map && typeof (mat.map as any).dispose === 'function') {
-              (mat.map as THREE.Texture).dispose()
-              mat.map = null
-            }
-            if ('emissiveMap' in mat && mat.emissiveMap && typeof (mat.emissiveMap as any).dispose === 'function') {
-              (mat.emissiveMap as THREE.Texture).dispose()
-              mat.emissiveMap = null
-            }
-            if ('normalMap' in mat && mat.normalMap && typeof (mat.normalMap as any).dispose === 'function') {
-              (mat.normalMap as THREE.Texture).dispose()
-              mat.normalMap = null
-            }
-            if ('roughnessMap' in mat && mat.roughnessMap && typeof (mat.roughnessMap as any).dispose === 'function') {
-              (mat.roughnessMap as THREE.Texture).dispose()
-              mat.roughnessMap = null
-            }
-            if ('metalnessMap' in mat && mat.metalnessMap && typeof (mat.metalnessMap as any).dispose === 'function') {
-              (mat.metalnessMap as THREE.Texture).dispose()
-              mat.metalnessMap = null
-            }
-            if ('aoMap' in mat && mat.aoMap && typeof (mat.aoMap as any).dispose === 'function') {
-              (mat.aoMap as THREE.Texture).dispose()
-              mat.aoMap = null
+            // Convert albedo map to grayscale (keep texture detail)
+            if ('map' in mat && mat.map) {
+              const mapTexture = mat.map as THREE.Texture
+              if (mapTexture.image) {
+                try {
+                  const grayscaleMap = convertTextureToGrayscale(mapTexture)
+                  mat.map = grayscaleMap
+                } catch (e) {
+                  console.warn('[Character3D] Failed to convert map to grayscale:', e)
+                }
+              }
             }
             
-            // Set solid gray color on all color-capable materials
+            // Convert emissive map to grayscale if exists
+            if ('emissiveMap' in mat && mat.emissiveMap) {
+              const emissiveTexture = mat.emissiveMap as THREE.Texture
+              if (emissiveTexture.image) {
+                try {
+                  const grayscaleEmissive = convertTextureToGrayscale(emissiveTexture)
+                  mat.emissiveMap = grayscaleEmissive
+                } catch (e) {
+                  console.warn('[Character3D] Failed to convert emissiveMap to grayscale:', e)
+                }
+              }
+            }
+            
+            // KEEP normalMap, roughnessMap, metalnessMap, aoMap for surface detail
+            // These don't carry color, only form/lighting data
+            
+            // Set base color to white for neutral grayscale look
             if ('color' in mat && mat.color instanceof THREE.Color) {
-              mat.color.setRGB(0.6, 0.6, 0.6)
+              mat.color.setRGB(1, 1, 1)  // White base for texture detail
             }
             if ('emissive' in mat && mat.emissive instanceof THREE.Color) {
               mat.emissive.setRGB(0, 0, 0)
             }
             
-            // Material-specific settings
+            // Material-specific settings for better surface detail
             if (mat instanceof THREE.MeshStandardMaterial) {
-              mat.roughness = 0.8
-              mat.metalness = 0.1
+              mat.roughness = mat.roughness || 0.8
+              mat.metalness = mat.metalness || 0.1
             } else if (mat instanceof THREE.MeshPhongMaterial) {
-              mat.shininess = 10
-            } else if (mat instanceof THREE.MeshBasicMaterial) {
-              mat.color.setRGB(0.6, 0.6, 0.6)
+              mat.shininess = mat.shininess || 10
             }
             
             mat.needsUpdate = true
