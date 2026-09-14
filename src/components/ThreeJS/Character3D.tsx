@@ -23,6 +23,64 @@ interface Particle {
 // Cor B&W do personagem (aligned with black & white theme)
 const GLOW_COLOR = new THREE.Color(0xffffff) // White
 
+// Helper: Convert texture to grayscale with contrast boost for B&W readability
+const convertTextureToGrayscaleWithContrast = (
+  texture: THREE.Texture,
+  contrast: number = 1.2
+): THREE.CanvasTexture | null => {
+  if (!texture.image) {
+    console.warn('[Character3D] Texture image not ready, skipping conversion')
+    return null
+  }
+  
+  const image = texture.image as HTMLImageElement | HTMLCanvasElement
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  
+  if (!ctx) return null
+  
+  canvas.width = image.width || 512
+  canvas.height = image.height || 512
+  
+  // Draw original image
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+  
+  // Get pixel data
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  const data = imageData.data
+  
+  // Convert to grayscale with contrast boost
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i]
+    const g = data[i + 1]
+    const b = data[i + 2]
+    
+    // Luminance (grayscale)
+    let gray = 0.299 * r + 0.587 * g + 0.114 * b
+    
+    // Apply contrast: (gray - 128) * contrast + 128
+    gray = (gray - 128) * contrast + 128
+    
+    // Clamp to 0-255
+    gray = Math.max(0, Math.min(255, gray))
+    
+    data[i] = gray
+    data[i + 1] = gray
+    data[i + 2] = gray
+    // Alpha unchanged
+  }
+  
+  // Put modified data back
+  ctx.putImageData(imageData, 0, 0)
+  
+  // Create CanvasTexture
+  const canvasTexture = new THREE.CanvasTexture(canvas)
+  canvasTexture.colorSpace = THREE.SRGBColorSpace
+  canvasTexture.needsUpdate = true
+  
+  return canvasTexture
+}
+
 const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const groupRef = useRef<THREE.Group>(null)
   const innerGroupRef = useRef<THREE.Group>(null)
@@ -69,17 +127,40 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         child.castShadow = false
         child.receiveShadow = false
         
-        // Keep original materials and textures intact
-        // B&W will be applied via CSS filter on the canvas
-        
-        // Verify materials have textures
+        // Boost texture contrast for B&W readability
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((mat: THREE.Material) => {
             materialsChecked++
+            
+            // Convert albedo map to grayscale with contrast if present
             if ('map' in mat && mat.map) {
+              const originalMap = mat.map as THREE.Texture
               mapsFound++
-              console.log('[Character3D] Material has albedo map:', mat.name || 'unnamed', mat.map)
+              
+              // If image is ready, convert immediately
+              if (originalMap.image) {
+                const contrastMap = convertTextureToGrayscaleWithContrast(originalMap, 1.2)
+                if (contrastMap) {
+                  mat.map = contrastMap
+                  mat.needsUpdate = true
+                  console.log('[Character3D] Converted albedo map to grayscale+contrast:', mat.name || 'unnamed')
+                }
+              } else {
+                // If image not ready, attach onload handler
+                console.warn('[Character3D] Map image not ready, attaching onload for:', mat.name || 'unnamed')
+                if (originalMap.image) {
+                  const img = originalMap.image as HTMLImageElement
+                  img.onload = () => {
+                    const contrastMap = convertTextureToGrayscaleWithContrast(originalMap, 1.2)
+                    if (contrastMap) {
+                      mat.map = contrastMap
+                      mat.needsUpdate = true
+                      console.log('[Character3D] Converted albedo map on load:', mat.name || 'unnamed')
+                    }
+                  }
+                }
+              }
             }
           })
         }

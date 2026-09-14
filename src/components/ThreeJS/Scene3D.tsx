@@ -61,7 +61,7 @@ const SceneContent = ({
       {/* Key directional light from top-front-right */}
       <directionalLight 
         position={[5, 8, 5]} 
-        intensity={1.2} 
+        intensity={1.0} 
         color="#ffffff"
         castShadow={false}
       />
@@ -163,7 +163,9 @@ const Scene3D = ({
           width: '100%',
           height: '100%',
           pointerEvents: enableControls && isMobile ? 'auto' : 'auto',
-          zIndex: 1
+          zIndex: 1,
+          filter: 'grayscale(1)',
+          WebkitFilter: 'grayscale(1)',
         }}
         frameloop="always"
         onCreated={({ gl, scene }) => {
