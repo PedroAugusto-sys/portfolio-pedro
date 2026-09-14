@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const Contact = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -149,11 +151,11 @@ const Contact = () => {
       <div ref={contentRef} className="max-w-7xl mx-auto relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Entre em <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Contato</span>
+            {t('contact.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('contact.title.highlight')}</span>
           </h2>
-          <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full mx-auto mb-6" />
+          <div className="h-1 w-32 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full mx-auto mb-6" />
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-            Estou sempre aberto para novas oportunidades e conversas sobre projetos interessantes
+            {t('contact.subtitle')}
           </p>
         </div>
 
@@ -164,14 +166,14 @@ const Contact = () => {
               href={contact.href}
               target={contact.id !== 'email' ? '_blank' : undefined}
               rel={contact.id !== 'email' ? 'noopener noreferrer' : undefined}
-              className="contact-card group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-6 sm:p-8 hover:border-cyan-500/60 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
+              className="contact-card group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-white/30 rounded-2xl p-6 sm:p-8 hover:border-white/60 hover:shadow-lg hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2"
             >
               <div className="flex flex-col items-center text-center space-y-4">
-                <div className="contact-icon text-cyan-400 group-hover:text-blue-300 transition-colors duration-300">
+                <div className="contact-icon text-white group-hover:text-gray-300 transition-colors duration-300">
                   {contact.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:via-blue-300 group-hover:to-purple-300 group-hover:bg-clip-text transition-all">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-gray-200 group-hover:to-gray-400 group-hover:bg-clip-text transition-all">
                     {contact.label}
                   </h3>
                   <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
@@ -180,14 +182,14 @@ const Contact = () => {
                 </div>
               </div>
               
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-purple-500/10 blur-xl" />
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-white/0 via-white/10 to-gray-400/10 blur-xl" />
             </a>
           ))}
         </div>
 
-        <footer className="text-center border-t border-cyan-500/10 pt-8">
+        <footer className="text-center border-t border-white/10 pt-8">
           <p className="text-gray-400 text-sm">
-            © 2026 <span className="text-cyan-300 font-medium">Pedro Augusto Santos Andrade</span>. Todos os direitos reservados.
+            {t('contact.footer')} <span className="text-white font-medium">{t('contact.footer.name')}</span>{t('contact.footer.rights')}
           </p>
           <p className="text-gray-500 text-xs mt-2">
             Desenvolvido com React, TypeScript, Three.js, GSAP e Tailwind CSS
@@ -195,8 +197,8 @@ const Contact = () => {
         </footer>
 
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
       </div>
     </section>

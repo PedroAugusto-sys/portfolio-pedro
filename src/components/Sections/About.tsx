@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
-import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const About = () => {
+  const { t } = useLanguage()
   const { elementRef, hasIntersected } = useIntersectionObserver({ 
     threshold: 0.2,
     rootMargin: '200px',
@@ -16,7 +17,6 @@ const About = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const animationsCreatedRef = useRef(false)
   const skillsRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     if (hasIntersected) {
@@ -82,44 +82,15 @@ const About = () => {
     }
   }, [hasIntersected, elementRef])
 
-  // Floating animation for skill chips
-  useEffect(() => {
-    if (!hasIntersected || !skillsRef.current || prefersReducedMotion) return
-
-    const skillChips = skillsRef.current.querySelectorAll('.skill-chip')
-    
-    skillChips.forEach((chip, index) => {
-      const delay = index * 0.1
-      const duration = 3 + (index % 3) * 0.5
-      const yOffset = 10 + (index % 4) * 3
-      
-      gsap.to(chip, {
-        y: `+=${yOffset}`,
-        duration: duration,
-        delay: delay,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      })
-
-      gsap.to(chip, {
-        rotateZ: (index % 2 === 0) ? 2 : -2,
-        duration: duration * 1.2,
-        delay: delay,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      })
-    })
-  }, [hasIntersected, prefersReducedMotion])
+  // Removed floating animations for professional appearance
 
   const skillsGroups = {
+    'QA & Automação': ['Selenium', 'Playwright', 'Test Automation', 'CI/CD'],
     'Linguagens': ['Java', 'Python', 'C#', 'TypeScript', 'JavaScript'],
     'Frontend': ['React', 'Angular', 'HTML', 'SCSS', 'Tailwind CSS', 'Bootstrap', 'Three.js', 'GSAP'],
     'Backend': ['Spring Boot', 'Node.js', '.NET', 'FastAPI', 'JPA/Hibernate'],
-    'QA & Automação': ['Selenium', 'Playwright', 'Test Automation', 'CI/CD'],
     'Dados': ['MongoDB', 'PostgreSQL', 'Pandas', 'Big Data', 'Streamlit', 'DBeaver'],
-    'DevOps & Ferramentas': ['Docker', 'Git', 'GitHub', 'Vite', 'Swagger', 'ElectronJS', 'Jira', 'Slack', 'VS Code'],
+    'DevOps': ['Docker', 'Git', 'GitHub', 'Vite', 'Swagger', 'Jira', 'VS Code'],
   }
 
   return (
@@ -128,42 +99,31 @@ const About = () => {
       ref={elementRef}
       className="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-radial from-white/5 via-transparent to-transparent" />
       
       <div className="max-w-7xl mx-auto relative">
         <div className="max-w-4xl mx-auto">
           <div ref={contentRef} className="space-y-8 relative z-10">
             <div className="animate-on-scroll">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                Sobre <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Mim</span>
+                {t('about.title')} <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{t('about.title.highlight')}</span>
               </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full" />
+              <div className="h-1 w-24 bg-gradient-to-r from-white via-gray-300 to-gray-500 rounded-full" />
             </div>
 
             <div className="animate-on-scroll space-y-5 text-gray-300 text-base sm:text-lg leading-relaxed">
               <p>
-                <strong className="text-white">Engenheiro de Software</strong> formado pela Fatesg (conclusão em 2025) com
-                sólida trajetória de <strong className="text-cyan-300">3 anos e 8 meses</strong> na Escolar Manager. Atuei como
-                Suporte N1, N2 e N3 até o cargo de Engenheiro de Qualidade e
-                Automação.
+                {t('about.intro')} <strong className="text-white">{t('about.experience')}</strong> {t('about.company')}
               </p>
               <p>
-                Neste caminho, fui desenvolvendo uma visão crítica sobre
-                o produto e garantindo entregas de alta qualidade que resolvem
-                problemas reais do usuário.
-              </p>
-              <p>
-                Possuo competências em <strong className="text-blue-300">C#, React.js e automação</strong> no geral, com inglês
-                fluente para atuação em times globais. Busco aplicar minha
-                experiência em engenharia para escalar processos de testes,
-                otimizar os ciclos de desenvolvimento e de atendimento ao cliente.
+                {t('about.skills.intro')} <strong className="text-white">{t('about.skills.list')}</strong> {t('about.skills.outro')}
               </p>
             </div>
 
             <div className="animate-on-scroll flex justify-center mb-8">
               <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-40" />
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-blue-400/30 shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-300 to-gray-500 rounded-full blur-xl opacity-40" />
+                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
                   <img
                     src="/images/face.png"
                     alt="Pedro Augusto - Engenheiro de Software"
@@ -173,33 +133,33 @@ const About = () => {
               </div>
             </div>
 
-            <div className="animate-on-scroll space-y-6" ref={skillsRef}>
-              <div className="flex items-center gap-3 mb-6">
+            <div className="animate-on-scroll space-y-8" ref={skillsRef}>
+              <div className="flex items-center gap-3 mb-8">
                 <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                  Tecnologias
+                  {t('about.skills.qa')}
                 </h3>
-                <div className="h-1 flex-1 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-purple-500/30 rounded-full" />
+                <div className="h-1 flex-1 bg-gradient-to-r from-white/30 via-gray-400/30 to-transparent rounded-full" />
               </div>
-              {Object.entries(skillsGroups).map(([category, skills]) => (
-                <div key={category} className="space-y-3">
-                  <h4 className="text-cyan-300 font-semibold text-sm uppercase tracking-wider">
-                    {category}
-                  </h4>
-                  <div className="flex flex-wrap gap-3">
-                    {skills.map((skill, index) => (
-                      <span
-                        key={skill}
-                        className="skill-chip px-4 py-2 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20 text-cyan-200 rounded-xl font-medium text-sm border border-cyan-400/20 backdrop-blur-sm shadow-lg hover:shadow-cyan-500/20 transition-shadow cursor-default"
-                        style={{
-                          animationDelay: `${index * 0.1}s`
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
+              <div className="space-y-8">
+                {Object.entries(skillsGroups).map(([category, skills]) => (
+                  <div key={category} className="space-y-4">
+                    <h4 className="text-white/90 font-semibold text-base uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 bg-white rounded-full" />
+                      {category}
+                    </h4>
+                    <div className="flex flex-wrap gap-3">
+                      {skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="skill-chip px-4 py-2.5 bg-gradient-to-br from-white/20 via-gray-400/20 to-gray-600/20 text-white rounded-lg font-medium text-sm border border-white/20 backdrop-blur-sm hover:border-white/40 hover:from-white/25 hover:via-gray-400/25 hover:to-gray-600/25 transition-all duration-200 cursor-default"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

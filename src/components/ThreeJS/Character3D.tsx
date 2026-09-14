@@ -1,7 +1,8 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
 import { track3DInteraction } from '../../utils/analytics'
 import { preserveMaterials } from '../../utils/modelUtils'
 import { useMobile } from '../../hooks/useMobile'
@@ -19,13 +20,13 @@ interface Particle {
   color: THREE.Color
 }
 
-// Cor fixa do personagem (sem mudança durante scroll)
-const GLOW_COLOR = new THREE.Color(0x00ffff) // Ciano
+// Cor B&W do personagem (aligned with black & white theme)
+const GLOW_COLOR = new THREE.Color(0xffffff) // White
 
 const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const groupRef = useRef<THREE.Group>(null)
   const innerGroupRef = useRef<THREE.Group>(null)
-  const { scene: characterScene } = useGLTF('/models/hero/character.glb')
+  const { scene: characterScene, animations } = useGLTF('/models/hero/character.glb')
   const isMobile = useMobile()
   
   // Refs para animação
@@ -44,8 +45,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const neckBoneRef = useRef<THREE.Bone | null>(null)
   
   // Refs para animação de scroll reverso
-  const reverseAnimationRef = useRef(0)
-  const spinVelocityRef = useRef(0)
+  // (Simplified scroll - most refs removed)
   
   // Refs para sistema de partículas
   const particlesRef = useRef<Particle[]>([])
@@ -53,16 +53,43 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const particlesMaterialRef = useRef<THREE.PointsMaterial | null>(null)
   const particlesSystemRef = useRef<THREE.Points | null>(null)
 
-  // Clonar e preparar o personagem
+  // Clonar e preparar o personagem - USAR SkeletonUtils.clone para preservar animações
   const character = useMemo(() => {
-    const cloned = characterScene.clone(true)
+    // Use SkeletonUtils.clone for proper skinned mesh animation binding
+    const cloned = SkeletonUtils.clone(characterScene) as THREE.Group
     preserveMaterials(cloned)
+    
+    // Verify materials still have maps after clone (keep original textures intact)
+    let mapsFound = 0
+    let materialsChecked = 0
     
     cloned.traverse((child) => {
       if (child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) {
         child.frustumCulled = false
         child.castShadow = false
         child.receiveShadow = false
+        
+        // Keep ORIGINAL materials and textures intact (B&W via CSS filter on canvas)
+        if (child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material]
+          materials.forEach((mat: THREE.Material) => {
+            materialsChecked++
+            
+            // Just verify map exists and log dimensions
+            if ('map' in mat && mat.map) {
+              const texture = mat.map as THREE.Texture
+              mapsFound++
+              
+              if (texture.image) {
+                const img = texture.image as HTMLImageElement | HTMLCanvasElement
+                console.log('[Character3D] Original texture preserved:', mat.name || 'unnamed', 
+                  `${img.width}x${img.height}`)
+              } else {
+                console.warn('[Character3D] Texture image not loaded yet:', mat.name || 'unnamed')
+              }
+            }
+          })
+        }
       }
       
       // Procurar ossos da cabeça e pescoço para o olhar interativo
@@ -117,8 +144,78 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       }
     })
     
+    // Log assertion results
+    console.log(`[Character3D] Materials checked: ${materialsChecked}, maps found: ${mapsFound}`)
+    if (mapsFound === 0 && materialsChecked > 0) {
+      console.warn('[Character3D] WARNING: No albedo maps found after clone! Textures may be missing.')
+    }
+    
     return cloned
   }, [characterScene])
+  
+  // Root ref for animation binding (more reliable than useMemo Group)
+  const rootRef = useRef<THREE.Group>(null)
+  
+  // Bind animations to rootRef
+  const { actions, mixer } = useAnimations(animations, rootRef)
+  
+  // Configurar ciclo de animações - trocar a cada 2 segundos
+  useEffect(() => {
+    // Debug: log available animation actions
+    console.log('[Character3D] Available animations:', Object.keys(actions))
+    
+    if (!mixer) {
+      console.warn('[Character3D] Mixer not available')
+      return
+    }
+
+    // Animation cycle order: Idle → Walk → Run → Jump → Loose → repeat
+    const animationCycle = ['Idle', 'Walk', 'Run', 'Jump', 'Loose']
+    let currentIndex = 0
+    let currentAction: THREE.AnimationAction | null = null
+
+    const playNextAnimation = () => {
+      const nextAnimationName = animationCycle[currentIndex]
+      const nextAction = actions[nextAnimationName]
+
+      if (!nextAction) {
+        console.warn(`[Character3D] Animation "${nextAnimationName}" not found`)
+        return
+      }
+
+      // Crossfade from current to next
+      if (currentAction && currentAction !== nextAction) {
+        nextAction.reset()
+        nextAction.play()
+        currentAction.crossFadeTo(nextAction, 0.5, false)
+      } else {
+        // First animation or same action
+        nextAction.reset()
+        nextAction.fadeIn(0.5)
+        nextAction.play()
+      }
+
+      currentAction = nextAction
+      console.log(`[Character3D] Playing animation: ${nextAnimationName}`)
+
+      // Move to next animation in cycle
+      currentIndex = (currentIndex + 1) % animationCycle.length
+    }
+
+    // Play first animation immediately
+    playNextAnimation()
+
+    // Cycle every 2 seconds
+    const cycleInterval = setInterval(playNextAnimation, 2000)
+
+    return () => {
+      clearInterval(cycleInterval)
+      // Stop all actions on unmount
+      if (currentAction) {
+        currentAction.fadeOut(0.5).stop()
+      }
+    }
+  }, [actions, mixer])
 
   // Calcular offset para centralizar
   const centerOffset = useMemo(() => {
@@ -134,8 +231,14 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   // Escala base - AUMENTADA EM 30%
   const BASE_SCALE = isMobile ? 1.17 : 1.43 // Era 0.9 e 1.1, agora +30%
 
-  // Rastreamento do mouse/touch (funciona em mobile também)
+  // Rastreamento do mouse/touch (disable on mobile to prevent head-look yank)
   useEffect(() => {
+    // Skip mouse/touch tracking on mobile (prevent head-look from yanking torso)
+    if (isMobile) {
+      mouseRef.current = { x: 0, y: 0 }  // Keep centered
+      return
+    }
+    
     const handleMove = (event: MouseEvent | TouchEvent) => {
       let clientX = 0
       let clientY = 0
@@ -161,7 +264,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       window.removeEventListener('mousemove', handleMove)
       window.removeEventListener('touchmove', handleMove)
     }
-  }, [])
+  }, [isMobile])
 
   // Inicializar sistema de partículas
   useEffect(() => {
@@ -199,7 +302,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   }, [])
 
   // Frame loop principal
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!groupRef.current || !innerGroupRef.current) return
 
     // Usar o valor do prop scrollProgress diretamente (já calculado no Hero.tsx)
@@ -246,23 +349,16 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     const scroll = scrollRef.current
     
     // ========================================
-    // ANIMAÇÃO DE SCROLL REVERSO
+    // ANIMAÇÃO DE SCROLL REVERSO - SIMPLIFIED (removed)
     // ========================================
-    const isScrollingUp = scrollDirectionRef.current === 'up'
-    const isScrollingDown = scrollDirectionRef.current === 'down'
-    
-    const targetReverse = isScrollingUp ? 1 : 0
-    reverseAnimationRef.current = THREE.MathUtils.lerp(
-      reverseAnimationRef.current,
-      targetReverse,
-      0.1
-    )
-    const reverseAmount = reverseAnimationRef.current
 
-    // Inicialização
+    // Inicialização - SIMPLIFIED FOR ON-SCREEN FRAMING
     if (!initializedRef.current) {
-      innerGroupRef.current.position.set(centerOffset.x, centerOffset.y + 2, centerOffset.z)
-      innerGroupRef.current.scale.setScalar(BASE_SCALE * 0.8)
+      // Start at center, slightly below middle for better framing
+      // Force X=0 on mobile for horizontal centering
+      const initX = isMobile ? 0 : centerOffset.x
+      innerGroupRef.current.position.set(initX, centerOffset.y - 0.5, centerOffset.z)
+      innerGroupRef.current.scale.setScalar(BASE_SCALE * 0.7)  // Smaller initial scale to fit in frame
       innerGroupRef.current.rotation.set(0, 0, 0)
       groupRef.current.rotation.set(0, 0, 0)
       initializedRef.current = true
@@ -273,7 +369,6 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     }
 
     // Glow mantém intensidade constante (sem mudança de cor no scroll)
-    const speed = scrollVelocityRef.current
     glowIntensityRef.current = THREE.MathUtils.lerp(glowIntensityRef.current, 0.5, 0.1)
 
     // ========================================
@@ -325,90 +420,90 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     }
 
     // ========================================
-    // ANIMAÇÕES BASEADAS NO SCROLL
+    // ANIMAÇÕES BASEADAS NO SCROLL - SIMPLIFIED TO KEEP ON-SCREEN
     // ========================================
 
-    // 1. QUEDA/SUBIDA VERTICAL - CORRIGIDO para funcionar
-    const fallStartY = centerOffset.y + 2
-    const fallEndY = centerOffset.y - (isMobile ? 4 : 6)
-    const fallDistance = fallStartY - fallEndY
+    // DISABLE aggressive transforms until Idle is visually confirmed
+    // Keep character stable and visible at scroll=0
     
-    // Usar scroll diretamente sem easing para movimento mais responsivo
-    // Easing pode ser adicionado depois se necessário
-    const targetY = fallStartY - (scroll * fallDistance)
+    // 1. VERTICAL - minimal movement, stay centered
+    const targetY = centerOffset.y - 0.5 - (scroll * 2)  // Gentle drop, starts visible
+    
+    // 2. LATERAL - centered (force X=0 on mobile to ensure horizontal centering)
+    const targetX = isMobile ? 0 : centerOffset.x
+    
+    // 3. DEPTH - minimal
+    const targetZ = centerOffset.z - (scroll * 0.5)
 
-    // 2. MOVIMENTO LATERAL
-    const lateralDirection = isScrollingUp ? -1 : 1
-    const targetX = centerOffset.x + (scroll * 1.5 * lateralDirection)
+    // Aplicar posições com lerp suave
+    innerGroupRef.current.position.y = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.y,
+      targetY,
+      0.1
+    )
+    innerGroupRef.current.position.x = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.x,
+      targetX,
+      0.1
+    )
+    innerGroupRef.current.position.z = THREE.MathUtils.lerp(
+      innerGroupRef.current.position.z,
+      targetZ,
+      0.1
+    )
 
-    // 3. MOVIMENTO DE PROFUNDIDADE
-    const depthDirection = isScrollingUp ? 1 : -1
-    const targetZ = centerOffset.z + (scroll * 1.0 * depthDirection)
-
-    // Aplicar posições - TODAS DIRETAS para resposta imediata (sem lerp)
-    innerGroupRef.current.position.y = targetY
-    innerGroupRef.current.position.x = targetX
-    innerGroupRef.current.position.z = targetZ
-
-    // 4. ESCALA
-    const minScale = BASE_SCALE * 0.8
-    const maxScale = BASE_SCALE * 1.3
-    const scaleBonus = isScrollingUp ? 0.2 : 0
-    const targetScale = minScale + (scroll * (maxScale - minScale)) + scaleBonus * reverseAmount
+    // 4. ESCALA - keep stable
+    const targetScale = BASE_SCALE * 0.7  // Fixed scale for framing
     
     const currentScale = innerGroupRef.current.scale.x
     const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.15)
     innerGroupRef.current.scale.setScalar(newScale)
 
-    // 5. ROTAÇÃO Y (GIRO)
-    const baseRotY = state.clock.elapsedTime * 0.1
-    
-    if (isScrollingDown) {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, speed * 0.5, 0.1)
-    } else if (isScrollingUp) {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, -speed * 0.8, 0.1)
-    } else {
-      spinVelocityRef.current = THREE.MathUtils.lerp(spinVelocityRef.current, 0, 0.05)
-    }
-    
-    const scrollRotY = scroll * Math.PI * 2 * (1 - reverseAmount * 2)
-    groupRef.current.rotation.y = baseRotY + scrollRotY + spinVelocityRef.current
+    // 5. ROTAÇÃO Y - fixed facing (no spin, clips provide animation)
+    groupRef.current.rotation.y = 0  // Face forward (no elapsedTime orbit)
 
-    // 6. ROTAÇÃO X (INCLINAÇÃO)
-    const tiltDirection = isScrollingUp ? -0.3 : 0.4
-    const targetRotX = scroll * Math.PI * tiltDirection
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(
-      groupRef.current.rotation.x,
-      targetRotX,
-      0.15
-    )
+    // 6. ROTAÇÃO X - disabled
+    groupRef.current.rotation.x = 0
 
-    // 7. ROTAÇÃO Z (CAMBALHOTA)
-    const rollDirection = isScrollingUp ? -0.4 : 0.6
-    const targetRotZ = scroll * Math.PI * rollDirection
-    innerGroupRef.current.rotation.z = THREE.MathUtils.lerp(
-      innerGroupRef.current.rotation.z,
-      targetRotZ,
-      0.15
-    )
+    // 7. ROTAÇÃO Z - disabled
+    innerGroupRef.current.rotation.z = 0
 
-    // 8. BALANÇO SUAVE (quando parado)
-    if (scroll < 0.1 && scrollDirectionRef.current === 'idle') {
-      const idleSwayY = Math.sin(state.clock.elapsedTime * 2) * 0.05
-      const idleSwayX = Math.cos(state.clock.elapsedTime * 1.5) * 0.03
-      innerGroupRef.current.position.y += idleSwayY
-      innerGroupRef.current.position.x += idleSwayX
+    // Lock horizontal root motion + recenter character after animations
+    // Walk/Run/Jump clips apply root motion that drifts the character
+    // Solution: find hips by name + lock X/Z + bbox recenter every frame
+    if (character) {
+      // 1. Find and lock hips bone by name (Mixamo uses mixamorigHips)
+      let hipsLocked = false
+      character.traverse((child) => {
+        if (child instanceof THREE.SkinnedMesh && child.skeleton) {
+          // Search for hips/pelvis bone by common names
+          const hipsBone = child.skeleton.bones.find(bone => {
+            const name = bone.name.toLowerCase()
+            return name.includes('hips') || 
+                   name.includes('pelvis') || 
+                   name.includes('root') ||
+                   name === 'mixamorigHips'
+          })
+          
+          if (hipsBone && !hipsLocked) {
+            // Lock hips horizontal translation (keep Y for vertical motion)
+            hipsBone.position.x = 0
+            hipsBone.position.z = 0
+            hipsBone.updateMatrixWorld(true)
+            hipsLocked = true
+          }
+        }
+      })
       
-      glowIntensityRef.current = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.2
-    }
-
-    // 9. EFEITO DE "RECUPERAÇÃO" AO SUBIR
-    if (isScrollingUp && scroll > 0.1) {
-      groupRef.current.rotation.x *= 0.95
-      innerGroupRef.current.rotation.z *= 0.95
+      // 2. Recenter character bounding box every frame (after animation)
+      // This ensures visual center stays at origin even if clips drift
+      const box = new THREE.Box3().setFromObject(character)
+      const center = box.getCenter(new THREE.Vector3())
       
-      const heroicPose = reverseAmount * 0.1
-      innerGroupRef.current.scale.x = newScale * (1 + heroicPose)
+      // Offset character to keep visual center at local X=0 (and Z=0 if needed)
+      character.position.x += -center.x
+      character.position.z += -center.z
+      // Keep Y position alone (vertical from clips is OK)
     }
 
     // Partículas desativadas - sem trajetória colorida durante o scroll
@@ -432,7 +527,10 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         decay={2}
       />
       <group ref={innerGroupRef}>
-        <primitive object={character} />
+        {/* rootRef for animation binding */}
+        <group ref={rootRef}>
+          <primitive object={character} />
+        </group>
       </group>
     </group>
   )

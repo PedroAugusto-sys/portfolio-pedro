@@ -2,14 +2,17 @@ import { useEffect, useState, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { configureGLTFLoader } from '../../utils/textureLoader'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+import { useLanguage } from '../../contexts/LanguageContext'
 import * as THREE from 'three'
 
 interface BreathingTesseractProps {
+  progress: number
   prefersReducedMotion: boolean
 }
 
-const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) => {
+const BreathingTesseract = ({ progress, prefersReducedMotion }: BreathingTesseractProps) => {
   const pointsRef = useRef<THREE.Points>(null)
+  const groupRef = useRef<THREE.Group>(null)
   
   // Particle count optimized for mobile (dense enough to read as edges)
   const particlesPerEdge = 40
@@ -72,9 +75,9 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
         positions[i3 + 1] = pos4D.y * scale
         positions[i3 + 2] = pos4D.z * scale
         
-        // Color: magenta → cyan along edge
-        const hue = 0.85 - t * 0.3 // 0.85 (magenta) → 0.55 (cyan)
-        const color = new THREE.Color().setHSL(hue, 1.0, 0.6)
+        // Color: white → gray along edge (B&W)
+        const lightness = 1.0 - t * 0.4 // 1.0 (white) → 0.6 (gray)
+        const color = new THREE.Color().setHSL(0, 0, lightness) // Grayscale
         colors[i3] = color.r
         colors[i3 + 1] = color.g
         colors[i3 + 2] = color.b
@@ -87,17 +90,24 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
   }, [particleCount, particlesPerEdge])
   
   useFrame((state) => {
-    if (!pointsRef.current) return
+    if (!pointsRef.current || !groupRef.current) return
     
     const time = state.clock.elapsedTime
     const geometry = pointsRef.current.geometry
     const positionAttribute = geometry.attributes.position as THREE.BufferAttribute
     const colorAttribute = geometry.attributes.color as THREE.BufferAttribute
     
-    // Breathing scale pulse
+    // GROW WITH PROGRESS: start small (0.3), grow to full size (1.0)
+    const progressScale = 0.3 + (progress / 100) * 0.7 // 0.3 at 0% → 1.0 at 100%
+    
+    // Breathing scale pulse (subtle, on top of growth)
     const breathingScale = prefersReducedMotion 
       ? 1.0 
-      : 1.0 + Math.sin(time * 0.6) * 0.15
+      : 1.0 + Math.sin(time * 0.6) * 0.1 // Reduced from 0.15 to not overwhelm growth
+    
+    // Apply combined scale to entire group
+    const finalScale = progressScale * breathingScale
+    groupRef.current.scale.setScalar(finalScale)
     
     // 4D rotation angles (slow tumble)
     const rotXY = prefersReducedMotion ? 0 : time * 0.15
@@ -149,16 +159,16 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
         // Apply 4D morph (breathing in W dimension)
         pos4D.w += morphW
         
-        // Stereographic projection 4D → 3D
-        const scale = breathingScale / (2.2 - pos4D.w)
+        // Stereographic projection 4D → 3D (scale handled by group now)
+        const scale = 1.0 / (2.2 - pos4D.w)
         positionAttribute.array[i3] = pos4D.x * scale * 1.5
         positionAttribute.array[i3 + 1] = pos4D.y * scale * 1.5
         positionAttribute.array[i3 + 2] = pos4D.z * scale * 1.5
         
-        // Dynamic color with breathing intensity
-        const hue = 0.85 - t * 0.3 + Math.sin(time * 0.8 + t * 5) * 0.05
-        const lightness = 0.6 + Math.sin(time * 1.5 + t * 10) * 0.15
-        const color = new THREE.Color().setHSL(hue, 1.0, lightness)
+        // Dynamic color with breathing intensity (B&W)
+        const baseLightness = 1.0 - t * 0.4
+        const lightness = baseLightness + Math.sin(time * 1.5 + t * 10) * 0.15
+        const color = new THREE.Color().setHSL(0, 0, Math.max(0.3, Math.min(1.0, lightness))) // Grayscale
         
         colorAttribute.array[i3] = color.r
         colorAttribute.array[i3 + 1] = color.g
@@ -173,31 +183,33 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
   })
   
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particleCount}
-          array={positions}
-          itemSize={3}
+    <group ref={groupRef}>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={particleCount}
+            array={positions}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-color"
+            count={particleCount}
+            array={colors}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          size={prefersReducedMotion ? 0.03 : 0.05}
+          vertexColors
+          transparent
+          opacity={0.9}
+          sizeAttenuation
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
-        <bufferAttribute
-          attach="attributes-color"
-          count={particleCount}
-          array={colors}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={prefersReducedMotion ? 0.03 : 0.05}
-        vertexColors
-        transparent
-        opacity={0.9}
-        sizeAttenuation
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </points>
+      </points>
+    </group>
   )
 }
 
@@ -211,9 +223,10 @@ const CRITICAL_MODELS = [
 ]
 
 const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
+  const { t } = useLanguage()
   const [progress, setProgress] = useState(0)
   const [loadedModels, setLoadedModels] = useState(0)
-  const [hasError, setHasError] = useState(false)
+  const [, setHasError] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
@@ -329,7 +342,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       {/* Subtle bloom glow in void */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/3 rounded-full blur-[120px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-[120px]"
           style={{
             animation: prefersReducedMotion ? 'none' : 'pulse 8s ease-in-out infinite',
           }}
@@ -347,7 +360,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
           }}
           dpr={[1, 2]}
         >
-          <BreathingTesseract prefersReducedMotion={prefersReducedMotion} />
+          <BreathingTesseract progress={progress} prefersReducedMotion={prefersReducedMotion} />
         </Canvas>
       </div>
 
@@ -355,7 +368,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       <div className="relative z-10 flex flex-col items-center justify-end h-full pb-12 px-4">
         <div className="text-center mb-4">
           <h2 className="text-xl sm:text-2xl font-extralight text-white/80 mb-1 tracking-widest">
-            {hasError ? 'CARREGANDO' : 'CARREGANDO'}
+            {t('loader.loading').toUpperCase()}
           </h2>
           <p className="text-gray-600 text-xs font-mono tracking-wider">
             {loadedModels}/{CRITICAL_MODELS.length}
@@ -365,7 +378,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         {/* Minimal progress line */}
         <div className="w-32 h-px bg-gray-900/30 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 transition-all duration-700 ease-out"
+            className="h-full bg-gradient-to-r from-white via-gray-400 to-gray-600 transition-all duration-700 ease-out"
             style={{ 
               width: `${progress}%`,
               boxShadow: '0 0 8px rgba(236, 72, 153, 0.4)'

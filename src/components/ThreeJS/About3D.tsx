@@ -159,7 +159,7 @@ const About3D = () => {
         <pointLight 
           ref={lightRef1} 
           position={[0.8, 0.5, 0.5]} 
-          color="#00d9ff" 
+          color="#ffffff" 
           distance={8}
           intensity={6}
           decay={1.5}
@@ -167,7 +167,7 @@ const About3D = () => {
         <pointLight 
           ref={lightRef2} 
           position={[-0.8, -0.2, 0.8]} 
-          color="#7000ff" 
+          color="#e5e5e5" 
           distance={8}
           intensity={6}
           decay={1.5}
@@ -177,7 +177,7 @@ const About3D = () => {
         <pointLight 
           ref={lightRef3}
           position={[0.3, 0.8, -0.5]} 
-          color="#00ffaa" 
+          color="#a3a3a3" 
           distance={7}
           intensity={4}
           decay={1.5}
@@ -185,7 +185,7 @@ const About3D = () => {
         <pointLight 
           ref={lightRef4}
           position={[-0.5, -0.6, 0.3]} 
-          color="#ff00aa" 
+          color="#ffffff" 
           distance={7}
           intensity={4}
           decay={1.5}

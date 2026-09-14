@@ -18,14 +18,14 @@ const LuminousBackground3D = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
-  // Shader material for luminous glow effect - MORE VISIBLE
+  // Shader material for luminous glow effect - MONOCHROME WHITE
   const shaderMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        color1: { value: new THREE.Color('#3b82f6') }, // Electric blue
-        color2: { value: new THREE.Color('#8b5cf6') }, // Purple
-        color3: { value: new THREE.Color('#ec4899') }, // Magenta/pink
+        color1: { value: new THREE.Color('#ffffff') }, // White
+        color2: { value: new THREE.Color('#e5e5e5') }, // Light gray
+        color3: { value: new THREE.Color('#a3a3a3') }, // Medium gray
       },
       vertexShader: `
         varying vec2 vUv;
@@ -80,9 +80,9 @@ const LuminousBackground3D = () => {
     return new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        color1: { value: new THREE.Color('#8b5cf6') }, // Purple
-        color2: { value: new THREE.Color('#ec4899') }, // Pink
-        color3: { value: new THREE.Color('#3b82f6') }, // Blue
+        color1: { value: new THREE.Color('#e5e5e5') }, // Light gray
+        color2: { value: new THREE.Color('#a3a3a3') }, // Medium gray
+        color3: { value: new THREE.Color('#ffffff') }, // White
       },
       vertexShader: `
         varying vec2 vUv;
@@ -150,13 +150,13 @@ const LuminousBackground3D = () => {
 
   return (
     <>
-      {/* Large background glow sphere 1 - Blue to Purple - CLOSER AND BIGGER */}
+      {/* Large background glow sphere 1 - White/Gray luminous - CLOSER AND BIGGER */}
       <mesh ref={mesh1Ref} position={[-6, 2, -10]} scale={[18, 18, 18]}>
         <sphereGeometry args={[1, 32, 32]} />
         <primitive object={shaderMaterial} attach="material" />
       </mesh>
 
-      {/* Large background glow sphere 2 - Purple to Magenta - CLOSER AND BIGGER */}
+      {/* Large background glow sphere 2 - White/Gray luminous - CLOSER AND BIGGER */}
       <mesh ref={mesh2Ref} position={[5, -1, -12]} scale={[20, 20, 20]}>
         <sphereGeometry args={[1, 32, 32]} />
         <primitive object={shaderMaterial2} attach="material" />
@@ -170,9 +170,9 @@ const LuminousBackground3D = () => {
 
       {/* Brighter ambient light */}
       <ambientLight intensity={0.3} />
-      <pointLight position={[-10, 5, -8]} intensity={1.5} color="#3b82f6" />
-      <pointLight position={[10, -5, -8]} intensity={1.5} color="#ec4899" />
-      <pointLight position={[0, 5, -10]} intensity={1.2} color="#8b5cf6" />
+      <pointLight position={[-10, 5, -8]} intensity={1.5} color="#ffffff" />
+      <pointLight position={[10, -5, -8]} intensity={1.5} color="#e5e5e5" />
+      <pointLight position={[0, 5, -10]} intensity={1.2} color="#a3a3a3" />
     </>
   )
 }

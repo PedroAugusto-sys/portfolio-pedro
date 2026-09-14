@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <rect width="512" height="512" fill="#0a0a0a"/>
-  <rect x="51.2" y="51.2" width="409.6" height="409.6" rx="76.8" fill="#14b8a6"/>
+  <rect x="51.2" y="51.2" width="409.6" height="409.6" rx="76.8" fill="#ffffff"/>
   <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="307.2" font-weight="bold" fill="#0a0a0a" text-anchor="middle" dominant-baseline="central">P</text>
 </svg>

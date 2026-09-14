@@ -5,6 +5,7 @@ import { trackSectionView } from '../../utils/analytics'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
 import { useTypingAnimation } from '../../hooks/useTypingAnimation'
 import { useMobile } from '../../hooks/useMobile'
+import { useLanguage } from '../../contexts/LanguageContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -19,6 +20,7 @@ const Hero = () => {
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const { scrollTo } = useSmoothScroll()
   const isMobile = useMobile()
+  const { t } = useLanguage()
   
   const [greeting, setGreeting] = useState('')
   const [showNameAnimation, setShowNameAnimation] = useState(false)
@@ -33,7 +35,7 @@ const Hero = () => {
   })
 
   useEffect(() => {
-    const greetingText = 'Olá, eu sou o '
+    const greetingText = t('hero.greeting')
     let currentIndex = 0
 
     const typingInterval = setInterval(() => {
@@ -47,7 +49,7 @@ const Hero = () => {
     }, 100)
 
     return () => clearInterval(typingInterval)
-  }, [])
+  }, [t])
 
   useEffect(() => {
     trackSectionView('hero')
@@ -258,6 +260,10 @@ const Hero = () => {
       canvas.style.minHeight = `${height}px`
       canvas.style.maxHeight = `${height}px`
       
+      // Apply grayscale filter directly on canvas element (WebGL canvases don't inherit parent CSS filters reliably)
+      canvas.style.filter = 'grayscale(1)'
+      canvas.style.webkitFilter = 'grayscale(1)'
+      
       // Bloqueia eventos de wheel que causam zoom (Ctrl+Scroll)
       const handleWheel = (e: WheelEvent) => {
         if (e.ctrlKey || e.metaKey) {
@@ -323,6 +329,10 @@ const Hero = () => {
         canvas.style.maxWidth = `${width}px`
         canvas.style.minHeight = `${height}px`
         canvas.style.maxHeight = `${height}px`
+        
+        // Reapply grayscale filter
+        canvas.style.filter = 'grayscale(1)'
+        canvas.style.webkitFilter = 'grayscale(1)'
       }
     })
 
@@ -348,16 +358,16 @@ const Hero = () => {
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-radial from-blue-500/5 via-transparent to-transparent" />
-      <div className="absolute inset-0 bg-gradient-radial from-purple-500/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-radial from-white/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-radial from-gray-400/5 via-transparent to-transparent" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div className="space-y-6 lg:space-y-8 order-2 lg:order-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/30 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-lg shadow-cyan-400/50" />
-              <span className="text-sm font-medium bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
-                Disponível para Oportunidades
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-white/10 to-gray-400/10 border border-white/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse shadow-lg shadow-white/50" />
+              <span className="text-sm font-medium bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                {t('hero.available')}
               </span>
             </div>
             
@@ -367,21 +377,24 @@ const Hero = () => {
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
               >
                 {greeting}
-              {showNameAnimation && (
-                  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    {typedName}
-                    <span className="inline-block w-0.5 h-[0.9em] bg-blue-400 animate-pulse ml-1" />
-                  </span>
+                {showNameAnimation && (
+                  <>
+                    {' '}
+                    <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
+                      {typedName}
+                      <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
+                    </span>
+                  </>
                 )}
               {!showNameAnimation && greeting && (
-                <span className="inline-block w-0.5 h-[0.9em] bg-blue-400 animate-pulse ml-1" />
+                <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
               )}
               </h1>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent mb-2">
-                Pedro Augusto Santos Andrade
+              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
+                {t('hero.fullName')}
               </div>
-              <div className="text-base sm:text-lg text-cyan-300/70 font-medium">
-                QA Automation • SDET • Engenheiro de Software
+              <div className="text-base sm:text-lg text-gray-400/70 font-medium">
+                {t('hero.role1')} • {t('hero.role2')} • {t('hero.role3')}
               </div>
             </div>
             
@@ -389,8 +402,7 @@ const Hero = () => {
               ref={subtitleRef}
               className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0"
             >
-              Desenvolvedor Full Stack com foco em Engenharia de Qualidade. 
-              Trajetória multidisciplinar em Automação de QA, SDET e Suporte Técnico.
+              {t('hero.description')}
             </p>
             
             <div 
@@ -406,10 +418,10 @@ const Hero = () => {
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-white via-gray-200 to-gray-300 text-black rounded-xl font-semibold hover:from-gray-100 hover:via-gray-300 hover:to-gray-400 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-white/25 hover:shadow-xl hover:shadow-white/40"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Ver Projetos
+                {t('hero.cta.projects')}
               </button>
               <button
                 onClick={(e) => {
@@ -420,19 +432,19 @@ const Hero = () => {
                 onTouchStart={(e) => {
                   e.stopPropagation()
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 border-2 border-cyan-400/30 text-cyan-200 rounded-xl font-semibold hover:border-cyan-400/60 hover:bg-cyan-500/10 backdrop-blur-sm transition-all"
+                className="w-full sm:w-auto px-8 py-3.5 border-2 border-white/30 text-white rounded-xl font-semibold hover:border-white/60 hover:bg-white/10 backdrop-blur-sm transition-all"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                Entrar em Contato
+                {t('hero.cta.contact')}
               </button>
             </div>
           </div>
 
           <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] xl:h-[800px] w-full flex items-center justify-center order-1 lg:order-2">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-gray-400/10 to-gray-600/10 rounded-3xl blur-3xl" />
             <div 
               ref={canvasContainerRef}
-              className="relative h-full w-full"
+              className="relative h-full w-full grayscale"
               style={{ 
                 display: 'flex',
                 alignItems: 'center',
@@ -446,8 +458,8 @@ const Hero = () => {
               >
                 <Suspense 
                   fallback={
-                    <div className="w-full h-full bg-gradient-to-br from-cyan-900/10 to-purple-900/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-500/10">
-                      <div className="text-sm text-blue-300/50">Carregando...</div>
+                    <div className="w-full h-full bg-gradient-to-br from-gray-900/10 to-gray-700/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
+                      <div className="text-sm text-gray-400/50">Carregando...</div>
                     </div>
                   }
                 >
@@ -468,7 +480,7 @@ const Hero = () => {
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <svg
-          className="w-6 h-6 text-cyan-300"
+          className="w-6 h-6 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

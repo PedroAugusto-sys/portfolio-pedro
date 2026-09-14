@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { trackEvent } from '../../utils/analytics'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
+import { useLanguage } from '../../contexts/LanguageContext'
+import LanguageToggle from './LanguageToggle'
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
   const { scrollTo } = useSmoothScroll()
+  const { t } = useLanguage()
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -53,18 +56,17 @@ const Navigation = () => {
   }
 
   const navItems = [
-    { id: 'hero', label: 'Início' },
-    { id: 'about', label: 'Sobre' },
-    { id: 'projects', label: 'Projetos' },
-    { id: 'achievements', label: 'Feitos' },
-    { id: 'contact', label: 'Contato' },
+    { id: 'about', label: t('nav.about') },
+    { id: 'projects', label: t('nav.projects') },
+    { id: 'achievements', label: t('nav.achievements') },
+    { id: 'contact', label: t('nav.contact') },
   ]
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-gray-900/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-cyan-500/10'
+          ? 'bg-gray-900/95 backdrop-blur-xl shadow-lg shadow-white/5 border-b border-white/10'
           : 'bg-transparent'
       }`}
     >
@@ -73,7 +75,7 @@ const Navigation = () => {
           <div className="flex-shrink-0">
             <button
               onClick={() => scrollToSection('hero')}
-              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent hover:from-cyan-300 hover:via-blue-300 hover:to-purple-300 transition-all"
+              className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent hover:from-gray-100 hover:via-gray-300 hover:to-gray-500 transition-all"
             >
               Pedro Augusto
             </button>
@@ -87,20 +89,24 @@ const Navigation = () => {
                   onClick={() => scrollToSection(item.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeSection === item.id
-                      ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 text-white border border-cyan-400/30'
-                      : 'text-gray-300 hover:text-white hover:bg-cyan-500/10'
+                      ? 'bg-gradient-to-r from-white/20 via-gray-400/20 to-gray-600/20 text-white border border-white/30'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {item.label}
                 </button>
               ))}
+              <div className="ml-4">
+                <LanguageToggle />
+              </div>
             </div>
           </div>
 
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-cyan-500/10 transition-colors"
+              className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
             >
               <svg
@@ -131,7 +137,7 @@ const Navigation = () => {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-gray-900/98 backdrop-blur-xl border-t border-cyan-500/10 shadow-lg">
+        <div className="md:hidden bg-gray-900/98 backdrop-blur-xl border-t border-white/10 shadow-lg">
           <div className="px-4 pt-3 pb-4 space-y-2">
             {navItems.map((item) => (
               <button
@@ -139,8 +145,8 @@ const Navigation = () => {
                 onClick={() => scrollToSection(item.id)}
                 className={`block px-5 py-3.5 rounded-xl text-base font-medium w-full text-left transition-all ${
                   activeSection === item.id
-                    ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 text-white border border-cyan-400/30'
-                    : 'text-gray-300 hover:text-white hover:bg-cyan-500/10'
+                    ? 'bg-gradient-to-r from-white/20 via-gray-400/20 to-gray-600/20 text-white border border-white/30'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {item.label}
