@@ -5,11 +5,13 @@ import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import * as THREE from 'three'
 
 interface BreathingTesseractProps {
+  progress: number
   prefersReducedMotion: boolean
 }
 
-const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) => {
+const BreathingTesseract = ({ progress, prefersReducedMotion }: BreathingTesseractProps) => {
   const pointsRef = useRef<THREE.Points>(null)
+  const groupRef = useRef<THREE.Group>(null)
   
   // Particle count optimized for mobile (dense enough to read as edges)
   const particlesPerEdge = 40
@@ -87,17 +89,24 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
   }, [particleCount, particlesPerEdge])
   
   useFrame((state) => {
-    if (!pointsRef.current) return
+    if (!pointsRef.current || !groupRef.current) return
     
     const time = state.clock.elapsedTime
     const geometry = pointsRef.current.geometry
     const positionAttribute = geometry.attributes.position as THREE.BufferAttribute
     const colorAttribute = geometry.attributes.color as THREE.BufferAttribute
     
-    // Breathing scale pulse
+    // GROW WITH PROGRESS: start small (0.3), grow to full size (1.0)
+    const progressScale = 0.3 + (progress / 100) * 0.7 // 0.3 at 0% → 1.0 at 100%
+    
+    // Breathing scale pulse (subtle, on top of growth)
     const breathingScale = prefersReducedMotion 
       ? 1.0 
-      : 1.0 + Math.sin(time * 0.6) * 0.15
+      : 1.0 + Math.sin(time * 0.6) * 0.1 // Reduced from 0.15 to not overwhelm growth
+    
+    // Apply combined scale to entire group
+    const finalScale = progressScale * breathingScale
+    groupRef.current.scale.setScalar(finalScale)
     
     // 4D rotation angles (slow tumble)
     const rotXY = prefersReducedMotion ? 0 : time * 0.15
@@ -149,8 +158,8 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
         // Apply 4D morph (breathing in W dimension)
         pos4D.w += morphW
         
-        // Stereographic projection 4D → 3D
-        const scale = breathingScale / (2.2 - pos4D.w)
+        // Stereographic projection 4D → 3D (scale handled by group now)
+        const scale = 1.0 / (2.2 - pos4D.w)
         positionAttribute.array[i3] = pos4D.x * scale * 1.5
         positionAttribute.array[i3 + 1] = pos4D.y * scale * 1.5
         positionAttribute.array[i3 + 2] = pos4D.z * scale * 1.5
@@ -173,31 +182,33 @@ const BreathingTesseract = ({ prefersReducedMotion }: BreathingTesseractProps) =
   })
   
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particleCount}
-          array={positions}
-          itemSize={3}
+    <group ref={groupRef}>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={particleCount}
+            array={positions}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-color"
+            count={particleCount}
+            array={colors}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          size={prefersReducedMotion ? 0.03 : 0.05}
+          vertexColors
+          transparent
+          opacity={0.9}
+          sizeAttenuation
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
-        <bufferAttribute
-          attach="attributes-color"
-          count={particleCount}
-          array={colors}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={prefersReducedMotion ? 0.03 : 0.05}
-        vertexColors
-        transparent
-        opacity={0.9}
-        sizeAttenuation
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </points>
+      </points>
+    </group>
   )
 }
 
@@ -347,7 +358,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
           }}
           dpr={[1, 2]}
         >
-          <BreathingTesseract prefersReducedMotion={prefersReducedMotion} />
+          <BreathingTesseract progress={progress} prefersReducedMotion={prefersReducedMotion} />
         </Canvas>
       </div>
 
