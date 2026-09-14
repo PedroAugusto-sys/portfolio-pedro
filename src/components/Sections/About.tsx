@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { trackSectionView } from '../../utils/analytics'
-import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -16,7 +15,6 @@ const About = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const animationsCreatedRef = useRef(false)
   const skillsRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     if (hasIntersected) {
@@ -82,44 +80,15 @@ const About = () => {
     }
   }, [hasIntersected, elementRef])
 
-  // Floating animation for skill chips
-  useEffect(() => {
-    if (!hasIntersected || !skillsRef.current || prefersReducedMotion) return
-
-    const skillChips = skillsRef.current.querySelectorAll('.skill-chip')
-    
-    skillChips.forEach((chip, index) => {
-      const delay = index * 0.1
-      const duration = 3 + (index % 3) * 0.5
-      const yOffset = 10 + (index % 4) * 3
-      
-      gsap.to(chip, {
-        y: `+=${yOffset}`,
-        duration: duration,
-        delay: delay,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      })
-
-      gsap.to(chip, {
-        rotateZ: (index % 2 === 0) ? 2 : -2,
-        duration: duration * 1.2,
-        delay: delay,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      })
-    })
-  }, [hasIntersected, prefersReducedMotion])
+  // Removed floating animations for professional appearance
 
   const skillsGroups = {
+    'QA & Automação': ['Selenium', 'Playwright', 'Test Automation', 'CI/CD'],
     'Linguagens': ['Java', 'Python', 'C#', 'TypeScript', 'JavaScript'],
     'Frontend': ['React', 'Angular', 'HTML', 'SCSS', 'Tailwind CSS', 'Bootstrap', 'Three.js', 'GSAP'],
     'Backend': ['Spring Boot', 'Node.js', '.NET', 'FastAPI', 'JPA/Hibernate'],
-    'QA & Automação': ['Selenium', 'Playwright', 'Test Automation', 'CI/CD'],
     'Dados': ['MongoDB', 'PostgreSQL', 'Pandas', 'Big Data', 'Streamlit', 'DBeaver'],
-    'DevOps & Ferramentas': ['Docker', 'Git', 'GitHub', 'Vite', 'Swagger', 'ElectronJS', 'Jira', 'Slack', 'VS Code'],
+    'DevOps': ['Docker', 'Git', 'GitHub', 'Vite', 'Swagger', 'Jira', 'VS Code'],
   }
 
   return (
@@ -173,33 +142,33 @@ const About = () => {
               </div>
             </div>
 
-            <div className="animate-on-scroll space-y-6" ref={skillsRef}>
-              <div className="flex items-center gap-3 mb-6">
+            <div className="animate-on-scroll space-y-8" ref={skillsRef}>
+              <div className="flex items-center gap-3 mb-8">
                 <h3 className="text-2xl sm:text-3xl font-bold text-white">
                   Tecnologias
                 </h3>
-                <div className="h-1 flex-1 bg-gradient-to-r from-white/30 via-gray-400/30 to-gray-600/30 rounded-full" />
+                <div className="h-1 flex-1 bg-gradient-to-r from-white/30 via-gray-400/30 to-transparent rounded-full" />
               </div>
-              {Object.entries(skillsGroups).map(([category, skills]) => (
-                <div key={category} className="space-y-3">
-                  <h4 className="text-white font-semibold text-sm uppercase tracking-wider">
-                    {category}
-                  </h4>
-                  <div className="flex flex-wrap gap-3">
-                    {skills.map((skill, index) => (
-                      <span
-                        key={skill}
-                        className="skill-chip px-4 py-2 bg-gradient-to-br from-white/20 via-gray-400/20 to-gray-600/20 text-white rounded-xl font-medium text-sm border border-white/20 backdrop-blur-sm shadow-lg hover:shadow-white/20 transition-shadow cursor-default"
-                        style={{
-                          animationDelay: `${index * 0.1}s`
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
+              <div className="space-y-8">
+                {Object.entries(skillsGroups).map(([category, skills]) => (
+                  <div key={category} className="space-y-4">
+                    <h4 className="text-white/90 font-semibold text-base uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 bg-white rounded-full" />
+                      {category}
+                    </h4>
+                    <div className="flex flex-wrap gap-3">
+                      {skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="skill-chip px-4 py-2.5 bg-gradient-to-br from-white/20 via-gray-400/20 to-gray-600/20 text-white rounded-lg font-medium text-sm border border-white/20 backdrop-blur-sm hover:border-white/40 hover:from-white/25 hover:via-gray-400/25 hover:to-gray-600/25 transition-all duration-200 cursor-default"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
