@@ -23,64 +23,6 @@ interface Particle {
 // Cor B&W do personagem (aligned with black & white theme)
 const GLOW_COLOR = new THREE.Color(0xffffff) // White
 
-// Helper: Convert texture to grayscale with contrast boost for B&W readability
-const convertTextureToGrayscaleWithContrast = (
-  texture: THREE.Texture,
-  contrast: number = 1.2
-): THREE.CanvasTexture | null => {
-  if (!texture.image) {
-    console.warn('[Character3D] Texture image not ready, skipping conversion')
-    return null
-  }
-  
-  const image = texture.image as HTMLImageElement | HTMLCanvasElement
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  
-  if (!ctx) return null
-  
-  canvas.width = image.width || 512
-  canvas.height = image.height || 512
-  
-  // Draw original image
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
-  
-  // Get pixel data
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  const data = imageData.data
-  
-  // Convert to grayscale with contrast boost
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i]
-    const g = data[i + 1]
-    const b = data[i + 2]
-    
-    // Luminance (grayscale)
-    let gray = 0.299 * r + 0.587 * g + 0.114 * b
-    
-    // Apply contrast: (gray - 128) * contrast + 128
-    gray = (gray - 128) * contrast + 128
-    
-    // Clamp to 0-255
-    gray = Math.max(0, Math.min(255, gray))
-    
-    data[i] = gray
-    data[i + 1] = gray
-    data[i + 2] = gray
-    // Alpha unchanged
-  }
-  
-  // Put modified data back
-  ctx.putImageData(imageData, 0, 0)
-  
-  // Create CanvasTexture
-  const canvasTexture = new THREE.CanvasTexture(canvas)
-  canvasTexture.colorSpace = THREE.SRGBColorSpace
-  canvasTexture.needsUpdate = true
-  
-  return canvasTexture
-}
-
 const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const groupRef = useRef<THREE.Group>(null)
   const innerGroupRef = useRef<THREE.Group>(null)
@@ -117,7 +59,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     const cloned = SkeletonUtils.clone(characterScene) as THREE.Group
     preserveMaterials(cloned)
     
-    // Assert materials still have maps after clone
+    // Verify materials still have maps after clone (keep original textures intact)
     let mapsFound = 0
     let materialsChecked = 0
     
@@ -127,39 +69,23 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         child.castShadow = false
         child.receiveShadow = false
         
-        // Boost texture contrast for B&W readability
+        // Keep ORIGINAL materials and textures intact (B&W via CSS filter on canvas)
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((mat: THREE.Material) => {
             materialsChecked++
             
-            // Convert albedo map to grayscale with contrast if present
+            // Just verify map exists and log dimensions
             if ('map' in mat && mat.map) {
-              const originalMap = mat.map as THREE.Texture
+              const texture = mat.map as THREE.Texture
               mapsFound++
               
-              // If image is ready, convert immediately
-              if (originalMap.image) {
-                const contrastMap = convertTextureToGrayscaleWithContrast(originalMap, 1.2)
-                if (contrastMap) {
-                  mat.map = contrastMap
-                  mat.needsUpdate = true
-                  console.log('[Character3D] Converted albedo map to grayscale+contrast:', mat.name || 'unnamed')
-                }
+              if (texture.image) {
+                const img = texture.image as HTMLImageElement | HTMLCanvasElement
+                console.log('[Character3D] Original texture preserved:', mat.name || 'unnamed', 
+                  `${img.width}x${img.height}`)
               } else {
-                // If image not ready, attach onload handler
-                console.warn('[Character3D] Map image not ready, attaching onload for:', mat.name || 'unnamed')
-                if (originalMap.image) {
-                  const img = originalMap.image as HTMLImageElement
-                  img.onload = () => {
-                    const contrastMap = convertTextureToGrayscaleWithContrast(originalMap, 1.2)
-                    if (contrastMap) {
-                      mat.map = contrastMap
-                      mat.needsUpdate = true
-                      console.log('[Character3D] Converted albedo map on load:', mat.name || 'unnamed')
-                    }
-                  }
-                }
+                console.warn('[Character3D] Texture image not loaded yet:', mat.name || 'unnamed')
               }
             }
           })
@@ -230,36 +156,63 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   // Root ref for animation binding (more reliable than useMemo Group)
   const rootRef = useRef<THREE.Group>(null)
   
-  // Configurar animação Idle - bind to rootRef
+  // Bind animations to rootRef
   const { actions, mixer } = useAnimations(animations, rootRef)
   
+  // Configurar ciclo de animações - trocar a cada 2 segundos
   useEffect(() => {
     // Debug: log available animation actions
     console.log('[Character3D] Available animations:', Object.keys(actions))
     
-    // Play the Idle animation with loop
-    const idleAction = actions['Idle']
-    if (idleAction && mixer) {
-      console.log('[Character3D] Playing Idle animation')
-      idleAction.reset()
-      idleAction.loop = THREE.LoopRepeat
-      idleAction.clampWhenFinished = false
-      idleAction.fadeIn(0.5)
-      idleAction.play()
-      
-      // Force update mixer
-      mixer.update(0)
-    } else {
-      console.warn('[Character3D] Idle animation not found. Available:', Object.keys(actions))
+    if (!mixer) {
+      console.warn('[Character3D] Mixer not available')
+      return
     }
-    
-    // REMOVED IntersectionObserver pause until Idle works visibly
-    // No pause logic — let animation run continuously for debugging
-    
+
+    // Animation cycle order: Idle → Walk → Run → Jump → Loose → repeat
+    const animationCycle = ['Idle', 'Walk', 'Run', 'Jump', 'Loose']
+    let currentIndex = 0
+    let currentAction: THREE.AnimationAction | null = null
+
+    const playNextAnimation = () => {
+      const nextAnimationName = animationCycle[currentIndex]
+      const nextAction = actions[nextAnimationName]
+
+      if (!nextAction) {
+        console.warn(`[Character3D] Animation "${nextAnimationName}" not found`)
+        return
+      }
+
+      // Crossfade from current to next
+      if (currentAction && currentAction !== nextAction) {
+        nextAction.reset()
+        nextAction.play()
+        currentAction.crossFadeTo(nextAction, 0.5, false)
+      } else {
+        // First animation or same action
+        nextAction.reset()
+        nextAction.fadeIn(0.5)
+        nextAction.play()
+      }
+
+      currentAction = nextAction
+      console.log(`[Character3D] Playing animation: ${nextAnimationName}`)
+
+      // Move to next animation in cycle
+      currentIndex = (currentIndex + 1) % animationCycle.length
+    }
+
+    // Play first animation immediately
+    playNextAnimation()
+
+    // Cycle every 2 seconds
+    const cycleInterval = setInterval(playNextAnimation, 2000)
+
     return () => {
-      // Cleanup: stop animation on unmount
-      if (idleAction) {
-        idleAction.fadeOut(0.5).stop()
+      clearInterval(cycleInterval)
+      // Stop all actions on unmount
+      if (currentAction) {
+        currentAction.fadeOut(0.5).stop()
       }
     }
   }, [actions, mixer])
@@ -396,7 +349,9 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     // Inicialização - SIMPLIFIED FOR ON-SCREEN FRAMING
     if (!initializedRef.current) {
       // Start at center, slightly below middle for better framing
-      innerGroupRef.current.position.set(centerOffset.x, centerOffset.y - 0.5, centerOffset.z)
+      // Force X=0 on mobile for horizontal centering
+      const initX = isMobile ? 0 : centerOffset.x
+      innerGroupRef.current.position.set(initX, centerOffset.y - 0.5, centerOffset.z)
       innerGroupRef.current.scale.setScalar(BASE_SCALE * 0.7)  // Smaller initial scale to fit in frame
       innerGroupRef.current.rotation.set(0, 0, 0)
       groupRef.current.rotation.set(0, 0, 0)
@@ -468,8 +423,8 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     // 1. VERTICAL - minimal movement, stay centered
     const targetY = centerOffset.y - 0.5 - (scroll * 2)  // Gentle drop, starts visible
     
-    // 2. LATERAL - disabled for now
-    const targetX = centerOffset.x
+    // 2. LATERAL - centered (force X=0 on mobile to ensure horizontal centering)
+    const targetX = isMobile ? 0 : centerOffset.x
     
     // 3. DEPTH - minimal
     const targetZ = centerOffset.z - (scroll * 0.5)
@@ -508,15 +463,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     // 7. ROTAÇÃO Z - disabled
     innerGroupRef.current.rotation.z = 0
 
-    // 8. BALANÇO SUAVE (idle sway)
-    if (scroll < 0.1) {
-      const idleSwayY = Math.sin(state.clock.elapsedTime * 2) * 0.02
-      const idleSwayX = Math.cos(state.clock.elapsedTime * 1.5) * 0.01
-      innerGroupRef.current.position.y += idleSwayY
-      innerGroupRef.current.position.x += idleSwayX
-      
-      glowIntensityRef.current = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.1
-    }
+    // Idle sway removed (character stands on ground, only clip cycle animates)
 
     // Partículas desativadas - sem trajetória colorida durante o scroll
     if (particlesSystemRef.current) {

@@ -377,11 +377,14 @@ const Hero = () => {
                 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4"
               >
                 {greeting}
-              {showNameAnimation && (
-                  <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
-                    {typedName}
-                    <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
-                  </span>
+                {showNameAnimation && (
+                  <>
+                    {' '}
+                    <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
+                      {typedName}
+                      <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
+                    </span>
+                  </>
                 )}
               {!showNameAnimation && greeting && (
                 <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
