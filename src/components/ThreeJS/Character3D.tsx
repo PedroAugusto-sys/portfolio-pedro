@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
 import { track3DInteraction } from '../../utils/analytics'
 import { preserveMaterials } from '../../utils/modelUtils'
@@ -25,7 +25,7 @@ const GLOW_COLOR = new THREE.Color(0x00ffff) // Ciano
 const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const groupRef = useRef<THREE.Group>(null)
   const innerGroupRef = useRef<THREE.Group>(null)
-  const { scene: characterScene } = useGLTF('/models/hero/character.glb')
+  const { scene: characterScene, animations } = useGLTF('/models/hero/character.glb')
   const isMobile = useMobile()
   
   // Refs para animação
@@ -119,6 +119,24 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     
     return cloned
   }, [characterScene])
+  
+  // Configurar animação Idle
+  const { actions } = useAnimations(animations, character)
+  
+  useEffect(() => {
+    // Play the Idle animation
+    const idleAction = actions['Idle']
+    if (idleAction) {
+      idleAction.reset().fadeIn(0.5).play()
+    }
+    
+    return () => {
+      // Cleanup: stop animation on unmount
+      if (idleAction) {
+        idleAction.fadeOut(0.5).stop()
+      }
+    }
+  }, [actions])
 
   // Calcular offset para centralizar
   const centerOffset = useMemo(() => {

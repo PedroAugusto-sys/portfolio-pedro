@@ -1,13 +1,13 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
 import { track3DInteraction } from '../../utils/analytics'
 import { preserveMaterials } from '../../utils/modelUtils'
 
 const Hero3D = () => {
   const groupRef = useRef<THREE.Group>(null)
-  const { scene: characterScene } = useGLTF('/models/hero/character.glb')
+  const { scene: characterScene, animations } = useGLTF('/models/hero/character.glb')
   const { scene: pcScene } = useGLTF('/models/hero/a_pc_playing_btf4.glb')
 
   useFrame((state) => {
@@ -47,6 +47,24 @@ const Hero3D = () => {
     
     return { character: char, pc: pcClone }
   }, [characterScene, pcScene])
+  
+  // Configurar animação Idle
+  const { actions } = useAnimations(animations, character)
+  
+  useEffect(() => {
+    // Play the Idle animation
+    const idleAction = actions['Idle']
+    if (idleAction) {
+      idleAction.reset().fadeIn(0.5).play()
+    }
+    
+    return () => {
+      // Cleanup: stop animation on unmount
+      if (idleAction) {
+        idleAction.fadeOut(0.5).stop()
+      }
+    }
+  }, [actions, character])
 
   const BASE_SCALE = 0.8
 
