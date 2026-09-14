@@ -162,11 +162,15 @@ const translations = {
 }
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Check localStorage on mount
+  const [language, setLanguageState] = useState<Language>('pt')
+
+  // Load from localStorage after mount (client-side only)
+  useEffect(() => {
     const stored = localStorage.getItem('portfolio-language')
-    return (stored === 'en' ? 'en' : 'pt') as Language
-  })
+    if (stored === 'en') {
+      setLanguageState('en')
+    }
+  }, [])
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
