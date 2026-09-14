@@ -101,13 +101,20 @@ const Hero3D = () => {
   }, [characterScene, pcScene])
   
   // Configurar animação Idle
-  const { actions } = useAnimations(animations, character)
+  const { actions, mixer } = useAnimations(animations, character)
   
   useEffect(() => {
-    // Play the Idle animation
+    // Play the Idle animation with loop
     const idleAction = actions['Idle']
-    if (idleAction) {
-      idleAction.reset().fadeIn(0.5).play()
+    if (idleAction && mixer) {
+      idleAction.reset()
+      idleAction.loop = THREE.LoopRepeat
+      idleAction.clampWhenFinished = false
+      idleAction.fadeIn(0.5)
+      idleAction.play()
+      
+      // Force update mixer
+      mixer.update(0)
     }
     
     return () => {
@@ -116,7 +123,7 @@ const Hero3D = () => {
         idleAction.fadeOut(0.5).stop()
       }
     }
-  }, [actions, character])
+  }, [actions, character, mixer])
 
   const BASE_SCALE = 0.8
 
