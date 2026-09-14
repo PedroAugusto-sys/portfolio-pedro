@@ -465,6 +465,22 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
 
     // Idle sway removed (character stands on ground, only clip cycle animates)
 
+    // Lock horizontal root motion from animation clips (especially on mobile)
+    // Walk/Run/Jump clips apply root motion that drifts the character
+    // Force X position to stay at target (0 on mobile, centerOffset.x on desktop)
+    if (character) {
+      character.traverse((child) => {
+        if (child instanceof THREE.SkinnedMesh && child.skeleton) {
+          const rootBone = child.skeleton.bones[0] // Usually the root/hips bone
+          if (rootBone) {
+            // Zero out horizontal translation from animation clips
+            rootBone.position.x = 0
+            rootBone.position.z = 0
+          }
+        }
+      })
+    }
+
     // Partículas desativadas - sem trajetória colorida durante o scroll
     if (particlesSystemRef.current) {
       particlesRef.current = []

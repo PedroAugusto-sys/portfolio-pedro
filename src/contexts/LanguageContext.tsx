@@ -20,7 +20,7 @@ const translations = {
     
     // Hero
     'hero.available': 'Disponível para Oportunidades',
-    'hero.greeting': 'Olá, eu sou o',
+    'hero.greeting': 'Olá, eu sou o ',  // Trailing space for bulletproof spacing
     'hero.fullName': 'Pedro Augusto Santos Andrade',
     'hero.role1': 'QA Automation',
     'hero.role2': 'SDET',
@@ -138,7 +138,7 @@ const translations = {
     
     // Hero
     'hero.available': 'Available for Opportunities',
-    'hero.greeting': 'Hi, I\'m',
+    'hero.greeting': 'Hi, I\'m ',  // Trailing space for bulletproof spacing
     'hero.fullName': 'Pedro Augusto Santos Andrade',
     'hero.role1': 'QA Automation',
     'hero.role2': 'SDET',
