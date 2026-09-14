@@ -59,6 +59,10 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     const cloned = SkeletonUtils.clone(characterScene) as THREE.Group
     preserveMaterials(cloned)
     
+    // Assert materials still have maps after clone
+    let mapsFound = 0
+    let materialsChecked = 0
+    
     cloned.traverse((child) => {
       if (child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) {
         child.frustumCulled = false
@@ -67,6 +71,18 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         
         // Keep original materials and textures intact
         // B&W will be applied via CSS filter on the canvas
+        
+        // Verify materials have textures
+        if (child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material]
+          materials.forEach((mat: THREE.Material) => {
+            materialsChecked++
+            if ('map' in mat && mat.map) {
+              mapsFound++
+              console.log('[Character3D] Material has albedo map:', mat.name || 'unnamed', mat.map)
+            }
+          })
+        }
       }
       
       // Procurar ossos da cabeça e pescoço para o olhar interativo
@@ -120,6 +136,12 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         }
       }
     })
+    
+    // Log assertion results
+    console.log(`[Character3D] Materials checked: ${materialsChecked}, maps found: ${mapsFound}`)
+    if (mapsFound === 0 && materialsChecked > 0) {
+      console.warn('[Character3D] WARNING: No albedo maps found after clone! Textures may be missing.')
+    }
     
     return cloned
   }, [characterScene])

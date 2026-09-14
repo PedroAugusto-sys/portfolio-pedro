@@ -29,6 +29,10 @@ const Hero3D = () => {
     preserveMaterials(char)
     preserveMaterials(pcClone)
     
+    // Assert materials still have maps after clone
+    let mapsFound = 0
+    let materialsChecked = 0
+    
     char.traverse((child) => {
       if (child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) {
         child.frustumCulled = true
@@ -38,8 +42,25 @@ const Hero3D = () => {
         
         // Keep original materials and textures intact
         // B&W will be applied via CSS filter on the canvas
+        
+        // Verify materials have textures
+        if (child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material]
+          materials.forEach((mat: THREE.Material) => {
+            materialsChecked++
+            if ('map' in mat && mat.map) {
+              mapsFound++
+            }
+          })
+        }
       }
     })
+    
+    // Log assertion results
+    console.log(`[Hero3D] Materials checked: ${materialsChecked}, maps found: ${mapsFound}`)
+    if (mapsFound === 0 && materialsChecked > 0) {
+      console.warn('[Hero3D] WARNING: No albedo maps found after clone!')
+    }
     
     pcClone.traverse((child) => {
       if (child instanceof THREE.Mesh) {

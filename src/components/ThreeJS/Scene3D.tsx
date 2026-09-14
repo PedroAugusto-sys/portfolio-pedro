@@ -54,8 +54,35 @@ const SceneContent = ({
     <>
       <WebGLContextManager />
       <PerspectiveCamera makeDefault position={cameraPosition} fov={80} />
-      <ambientLight intensity={0.8} />
-      <pointLight position={[10, 10, 10]} intensity={1.0} />
+      
+      {/* Reduced ambient to avoid flat white blowout */}
+      <ambientLight intensity={0.4} color="#ffffff" />
+      
+      {/* Key directional light from top-front-right */}
+      <directionalLight 
+        position={[5, 8, 5]} 
+        intensity={1.2} 
+        color="#ffffff"
+        castShadow={false}
+      />
+      
+      {/* Fill light from opposite side (soft) */}
+      <directionalLight 
+        position={[-3, 2, -3]} 
+        intensity={0.5} 
+        color="#ffffff"
+        castShadow={false}
+      />
+      
+      {/* Rim/back light for definition */}
+      <pointLight 
+        position={[0, 3, -5]} 
+        intensity={0.6} 
+        color="#ffffff"
+        distance={20}
+        decay={2}
+      />
+      
       {enableControls && (
         <OrbitControls
           enableZoom={enableZoom && !isMobile}

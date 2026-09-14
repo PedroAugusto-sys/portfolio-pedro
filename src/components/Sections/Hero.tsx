@@ -260,6 +260,10 @@ const Hero = () => {
       canvas.style.minHeight = `${height}px`
       canvas.style.maxHeight = `${height}px`
       
+      // Apply grayscale filter directly on canvas element (WebGL canvases don't inherit parent CSS filters reliably)
+      canvas.style.filter = 'grayscale(1)'
+      canvas.style.webkitFilter = 'grayscale(1)'
+      
       // Bloqueia eventos de wheel que causam zoom (Ctrl+Scroll)
       const handleWheel = (e: WheelEvent) => {
         if (e.ctrlKey || e.metaKey) {
@@ -325,6 +329,10 @@ const Hero = () => {
         canvas.style.maxWidth = `${width}px`
         canvas.style.minHeight = `${height}px`
         canvas.style.maxHeight = `${height}px`
+        
+        // Reapply grayscale filter
+        canvas.style.filter = 'grayscale(1)'
+        canvas.style.webkitFilter = 'grayscale(1)'
       }
     })
 
