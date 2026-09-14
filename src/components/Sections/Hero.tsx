@@ -433,7 +433,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-gray-400/10 to-gray-600/10 rounded-3xl blur-3xl" />
             <div 
               ref={canvasContainerRef}
-              className="relative h-full w-full"
+              className="relative h-full w-full grayscale"
               style={{ 
                 display: 'flex',
                 alignItems: 'center',

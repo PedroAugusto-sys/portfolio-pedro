@@ -36,38 +36,8 @@ const Hero3D = () => {
           child.geometry.computeBoundingSphere()
         }
         
-        // Convert materials to B&W using GPU desaturation (keep ALL original maps)
-        if (child.material) {
-          const materials = Array.isArray(child.material) ? child.material : [child.material]
-          materials.forEach((mat: THREE.Material) => {
-            // GPU-based grayscale: use onBeforeCompile to desaturate in shader
-            // Keeps ALL maps for surface detail
-            
-            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              // Set base color to white for proper grayscale display
-              mat.color.setRGB(1, 1, 1)
-              mat.emissive.setRGB(0, 0, 0)
-              
-              // Inject grayscale shader code via onBeforeCompile
-              mat.onBeforeCompile = (shader) => {
-                shader.fragmentShader = shader.fragmentShader.replace(
-                  '#include <dithering_fragment>',
-                  `
-                  #include <dithering_fragment>
-                  // Desaturate to grayscale (luminance)
-                  float gray = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
-                  gl_FragColor.rgb = vec3(gray);
-                  `
-                )
-              }
-              
-              mat.needsUpdate = true
-            } else if (mat instanceof THREE.MeshBasicMaterial) {
-              mat.color.setRGB(0.7, 0.7, 0.7)
-              mat.needsUpdate = true
-            }
-          })
-        }
+        // Keep original materials and textures intact
+        // B&W will be applied via CSS filter on the canvas
       }
     })
     
