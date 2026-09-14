@@ -21,43 +21,6 @@ const Hero3D = () => {
     track3DInteraction('click', 'hero_object')
   }
 
-  // Helper function to convert texture to grayscale canvas
-  const convertTextureToGrayscale = (texture: THREE.Texture): THREE.CanvasTexture => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    
-    if (!ctx) return new THREE.CanvasTexture(canvas)
-    
-    const image = texture.image
-    if (!image) return new THREE.CanvasTexture(canvas)
-    
-    canvas.width = image.width || 512
-    canvas.height = image.height || 512
-    
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
-    
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    const data = imageData.data
-    
-    for (let i = 0; i < data.length; i += 4) {
-      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114
-      data[i] = gray
-      data[i + 1] = gray
-      data[i + 2] = gray
-    }
-    
-    ctx.putImageData(imageData, 0, 0)
-    
-    const grayscaleTexture = new THREE.CanvasTexture(canvas)
-    grayscaleTexture.wrapS = texture.wrapS
-    grayscaleTexture.wrapT = texture.wrapT
-    grayscaleTexture.minFilter = texture.minFilter
-    grayscaleTexture.magFilter = texture.magFilter
-    grayscaleTexture.needsUpdate = true
-    
-    return grayscaleTexture
-  }
-
   const { character, pc } = useMemo(() => {
     // Use SkeletonUtils.clone for proper skinned mesh animation binding
     const char = SkeletonUtils.clone(characterScene) as THREE.Group
@@ -73,55 +36,36 @@ const Hero3D = () => {
           child.geometry.computeBoundingSphere()
         }
         
-        // Convert materials to B&W - KEEP TEXTURE DETAIL, DESATURATE PIXELS
+        // Convert materials to B&W using GPU desaturation (keep ALL original maps)
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((mat: THREE.Material) => {
-            // Convert albedo map to grayscale (keep texture detail)
-            if ('map' in mat && mat.map) {
-              const mapTexture = mat.map as THREE.Texture
-              if (mapTexture.image) {
-                try {
-                  const grayscaleMap = convertTextureToGrayscale(mapTexture)
-                  mat.map = grayscaleMap
-                } catch (e) {
-                  console.warn('[Hero3D] Failed to convert map to grayscale:', e)
-                }
-              }
-            }
+            // GPU-based grayscale: use onBeforeCompile to desaturate in shader
+            // Keeps ALL maps for surface detail
             
-            // Convert emissive map to grayscale if exists
-            if ('emissiveMap' in mat && mat.emissiveMap) {
-              const emissiveTexture = mat.emissiveMap as THREE.Texture
-              if (emissiveTexture.image) {
-                try {
-                  const grayscaleEmissive = convertTextureToGrayscale(emissiveTexture)
-                  mat.emissiveMap = grayscaleEmissive
-                } catch (e) {
-                  console.warn('[Hero3D] Failed to convert emissiveMap to grayscale:', e)
-                }
-              }
-            }
-            
-            // KEEP normalMap, roughnessMap, metalnessMap, aoMap for surface detail
-            
-            // Set base color to white for neutral grayscale look
-            if ('color' in mat && mat.color instanceof THREE.Color) {
+            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
+              // Set base color to white for proper grayscale display
               mat.color.setRGB(1, 1, 1)
-            }
-            if ('emissive' in mat && mat.emissive instanceof THREE.Color) {
               mat.emissive.setRGB(0, 0, 0)
+              
+              // Inject grayscale shader code via onBeforeCompile
+              mat.onBeforeCompile = (shader) => {
+                shader.fragmentShader = shader.fragmentShader.replace(
+                  '#include <dithering_fragment>',
+                  `
+                  #include <dithering_fragment>
+                  // Desaturate to grayscale (luminance)
+                  float gray = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
+                  gl_FragColor.rgb = vec3(gray);
+                  `
+                )
+              }
+              
+              mat.needsUpdate = true
+            } else if (mat instanceof THREE.MeshBasicMaterial) {
+              mat.color.setRGB(0.7, 0.7, 0.7)
+              mat.needsUpdate = true
             }
-            
-            // Material-specific settings for better surface detail
-            if (mat instanceof THREE.MeshStandardMaterial) {
-              mat.roughness = mat.roughness || 0.8
-              mat.metalness = mat.metalness || 0.1
-            } else if (mat instanceof THREE.MeshPhongMaterial) {
-              mat.shininess = mat.shininess || 10
-            }
-            
-            mat.needsUpdate = true
           })
         }
       }
