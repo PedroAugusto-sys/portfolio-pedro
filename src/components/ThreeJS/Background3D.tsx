@@ -37,7 +37,7 @@ const Background3D = () => {
         </bufferGeometry>
         <pointsMaterial
           size={0.03}
-          color="#0ea5e9"
+          color="#ffffff"
           transparent
           opacity={0.4}
           sizeAttenuation={true}

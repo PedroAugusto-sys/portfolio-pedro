@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
 import { track3DInteraction } from '../../utils/analytics'
 import { preserveMaterials } from '../../utils/modelUtils'
 
@@ -21,7 +22,8 @@ const Hero3D = () => {
   }
 
   const { character, pc } = useMemo(() => {
-    const char = characterScene.clone(true)
+    // Use SkeletonUtils.clone for proper skinned mesh animation binding
+    const char = SkeletonUtils.clone(characterScene) as THREE.Group
     const pcClone = pcScene.clone(true)
     
     preserveMaterials(char)
@@ -100,13 +102,17 @@ const Hero3D = () => {
     return { character: char, pc: pcClone }
   }, [characterScene, pcScene])
   
-  // Configurar animação Idle
+  // Configurar animação Idle - APÓS clone com SkeletonUtils
   const { actions, mixer } = useAnimations(animations, character)
   
   useEffect(() => {
+    // Debug: log available animation actions
+    console.log('[Hero3D] Available animations:', Object.keys(actions))
+    
     // Play the Idle animation with loop
     const idleAction = actions['Idle']
     if (idleAction && mixer) {
+      console.log('[Hero3D] Playing Idle animation')
       idleAction.reset()
       idleAction.loop = THREE.LoopRepeat
       idleAction.clampWhenFinished = false
@@ -115,6 +121,8 @@ const Hero3D = () => {
       
       // Force update mixer
       mixer.update(0)
+    } else {
+      console.warn('[Hero3D] Idle animation not found. Available:', Object.keys(actions))
     }
     
     return () => {

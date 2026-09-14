@@ -56,11 +56,11 @@ const FloatingObject = ({
 
 const FloatingObjects = () => {
   const objects: FloatingObjectProps[] = [
-    { position: [-3, 1, 0], type: 'box', color: '#0ea5e9', speed: 0.8 },
-    { position: [3, -1, 0], type: 'sphere', color: '#38bdf8', speed: 1.2 },
-    { position: [0, 2, -2], type: 'torus', color: '#7dd3fc', speed: 0.6 },
-    { position: [-2, -2, 1], type: 'box', color: '#0ea5e9', speed: 1 },
-    { position: [2, 1, -1], type: 'sphere', color: '#38bdf8', speed: 0.9 },
+    { position: [-3, 1, 0], type: 'box', color: '#ffffff', speed: 0.8 },
+    { position: [3, -1, 0], type: 'sphere', color: '#e5e5e5', speed: 1.2 },
+    { position: [0, 2, -2], type: 'torus', color: '#a3a3a3', speed: 0.6 },
+    { position: [-2, -2, 1], type: 'box', color: '#ffffff', speed: 1 },
+    { position: [2, 1, -1], type: 'sphere', color: '#e5e5e5', speed: 0.9 },
   ]
 
   return (

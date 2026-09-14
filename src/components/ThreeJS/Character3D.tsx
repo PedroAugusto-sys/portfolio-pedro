@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
 import { track3DInteraction } from '../../utils/analytics'
 import { preserveMaterials } from '../../utils/modelUtils'
 import { useMobile } from '../../hooks/useMobile'
@@ -53,9 +54,10 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const particlesMaterialRef = useRef<THREE.PointsMaterial | null>(null)
   const particlesSystemRef = useRef<THREE.Points | null>(null)
 
-  // Clonar e preparar o personagem
+  // Clonar e preparar o personagem - USAR SkeletonUtils.clone para preservar animações
   const character = useMemo(() => {
-    const cloned = characterScene.clone(true)
+    // Use SkeletonUtils.clone for proper skinned mesh animation binding
+    const cloned = SkeletonUtils.clone(characterScene) as THREE.Group
     preserveMaterials(cloned)
     
     cloned.traverse((child) => {
@@ -144,13 +146,17 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
     return cloned
   }, [characterScene])
   
-  // Configurar animação Idle
+  // Configurar animação Idle - APÓS clone com SkeletonUtils
   const { actions, mixer } = useAnimations(animations, character)
   
   useEffect(() => {
+    // Debug: log available animation actions
+    console.log('[Character3D] Available animations:', Object.keys(actions))
+    
     // Play the Idle animation with loop
     const idleAction = actions['Idle']
     if (idleAction && mixer) {
+      console.log('[Character3D] Playing Idle animation')
       idleAction.reset()
       idleAction.loop = THREE.LoopRepeat
       idleAction.clampWhenFinished = false
@@ -159,6 +165,8 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       
       // Force update mixer
       mixer.update(0)
+    } else {
+      console.warn('[Character3D] Idle animation not found. Available:', Object.keys(actions))
     }
     
     // Pause animation when offscreen for performance
@@ -189,7 +197,7 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       }
       observer.disconnect()
     }
-  }, [actions])
+  }, [actions, mixer])
 
   // Calcular offset para centralizar
   const centerOffset = useMemo(() => {
