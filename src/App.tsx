@@ -17,7 +17,6 @@ const Contact = lazy(() => import('./components/Sections/Contact'))
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  const [showContent, setShowContent] = useState(false)
 
   useEffect(() => {
     const structuredData = generateStructuredData({
@@ -49,11 +48,8 @@ function App() {
         <GoogleAnalytics />
         <TagManager />
         {isLoading ? (
-          <LoadingScreen onLoaded={() => {
-            setIsLoading(false)
-            setTimeout(() => setShowContent(true), 1000)
-          }} />
-        ) : showContent ? (
+          <LoadingScreen onLoaded={() => setIsLoading(false)} />
+        ) : (
           <div className="min-h-screen bg-black text-white relative">
             <GlobalBackground3D />
             <Navigation />
@@ -68,7 +64,7 @@ function App() {
             </main>
             <Loader />
           </div>
-        ) : null}
+        )}
       </Router>
     </LanguageProvider>
   )
