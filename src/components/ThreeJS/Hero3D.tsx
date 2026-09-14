@@ -30,60 +30,39 @@ const Hero3D = () => {
     preserveMaterials(pcClone)
     
     char.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) {
         child.frustumCulled = true
         if (child.geometry) {
           child.geometry.computeBoundingSphere()
         }
         
-        // Convert character materials to grayscale for B&W theme
+        // Convert materials to grayscale for B&W theme
+        // ROOT CAUSE FIX: Remove textures to allow solid gray color
         if (child.material) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((mat) => {
             if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              // Desaturate color to grayscale
-              if (mat.color) {
-                const gray = mat.color.r * 0.299 + mat.color.g * 0.587 + mat.color.b * 0.114
-                mat.color.setRGB(gray, gray, gray)
+              // Remove texture maps
+              if (mat.map) {
+                mat.map.dispose()
+                mat.map = null
               }
-              // Desaturate emissive
-              if (mat.emissive) {
-                const emissiveGray = mat.emissive.r * 0.299 + mat.emissive.g * 0.587 + mat.emissive.b * 0.114
-                mat.emissive.setRGB(emissiveGray, emissiveGray, emissiveGray)
+              if (mat.emissiveMap) {
+                mat.emissiveMap.dispose()
+                mat.emissiveMap = null
               }
-              // Increase contrast slightly for better silhouette (StandardMaterial only)
+              
+              // Set solid gray color
+              mat.color.setRGB(0.6, 0.6, 0.6)
+              mat.emissive.setRGB(0, 0, 0)
+              
+              // Increase contrast slightly for better silhouette
               if (mat instanceof THREE.MeshStandardMaterial) {
-                mat.roughness = Math.min(1, mat.roughness * 1.2)
-                mat.metalness = Math.max(0, mat.metalness * 0.8)
+                mat.roughness = 0.8
+                mat.metalness = 0.1
               }
-            }
-          })
-        }
-      }
-      
-      if (child instanceof THREE.SkinnedMesh) {
-        child.frustumCulled = true
-        if (child.geometry) {
-          child.geometry.computeBoundingSphere()
-        }
-        
-        // Convert skinned mesh materials to grayscale
-        if (child.material) {
-          const materials = Array.isArray(child.material) ? child.material : [child.material]
-          materials.forEach((mat) => {
-            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
-              if (mat.color) {
-                const gray = mat.color.r * 0.299 + mat.color.g * 0.587 + mat.color.b * 0.114
-                mat.color.setRGB(gray, gray, gray)
-              }
-              if (mat.emissive) {
-                const emissiveGray = mat.emissive.r * 0.299 + mat.emissive.g * 0.587 + mat.emissive.b * 0.114
-                mat.emissive.setRGB(emissiveGray, emissiveGray, emissiveGray)
-              }
-              if (mat instanceof THREE.MeshStandardMaterial) {
-                mat.roughness = Math.min(1, mat.roughness * 1.2)
-                mat.metalness = Math.max(0, mat.metalness * 0.8)
-              }
+              
+              mat.needsUpdate = true
             }
           })
         }
@@ -102,8 +81,11 @@ const Hero3D = () => {
     return { character: char, pc: pcClone }
   }, [characterScene, pcScene])
   
-  // Configurar animação Idle - APÓS clone com SkeletonUtils
-  const { actions, mixer } = useAnimations(animations, character)
+  // Root ref for animation binding
+  const rootRef = useRef<THREE.Group>(null)
+  
+  // Configurar animação Idle - bind to rootRef
+  const { actions, mixer } = useAnimations(animations, rootRef)
   
   useEffect(() => {
     // Debug: log available animation actions
@@ -125,20 +107,25 @@ const Hero3D = () => {
       console.warn('[Hero3D] Idle animation not found. Available:', Object.keys(actions))
     }
     
+    // REMOVED IntersectionObserver — let animation run continuously
+    
     return () => {
       // Cleanup: stop animation on unmount
       if (idleAction) {
         idleAction.fadeOut(0.5).stop()
       }
     }
-  }, [actions, character, mixer])
+  }, [actions, mixer])
 
   const BASE_SCALE = 0.8
 
   return (
     <group ref={groupRef} onClick={handleClick}>
       <group position={[-0.5, -0.5, 0]} scale={[BASE_SCALE * 2.7, BASE_SCALE * 2.7, BASE_SCALE * 2.7]}>
-        <primitive object={character} />
+        {/* rootRef for animation binding */}
+        <group ref={rootRef}>
+          <primitive object={character} />
+        </group>
       </group>
 
       <group position={[5.5, -1.5, -2.5]} rotation={[0, -Math.PI / 4, 0]} scale={[BASE_SCALE * 0.75, BASE_SCALE * 0.75, BASE_SCALE * 0.75]}>
