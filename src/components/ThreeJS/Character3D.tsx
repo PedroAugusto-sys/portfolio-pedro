@@ -19,8 +19,8 @@ interface Particle {
   color: THREE.Color
 }
 
-// Cor fixa do personagem (sem mudança durante scroll)
-const GLOW_COLOR = new THREE.Color(0x00ffff) // Ciano
+// Cor B&W do personagem (aligned with black & white theme)
+const GLOW_COLOR = new THREE.Color(0xffffff) // White
 
 const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
   const groupRef = useRef<THREE.Group>(null)
@@ -63,6 +63,30 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
         child.frustumCulled = false
         child.castShadow = false
         child.receiveShadow = false
+        
+        // Convert materials to grayscale for B&W theme
+        if (child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material]
+          materials.forEach((mat) => {
+            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
+              // Desaturate color to grayscale
+              if (mat.color) {
+                const gray = mat.color.r * 0.299 + mat.color.g * 0.587 + mat.color.b * 0.114
+                mat.color.setRGB(gray, gray, gray)
+              }
+              // Desaturate emissive
+              if (mat.emissive) {
+                const emissiveGray = mat.emissive.r * 0.299 + mat.emissive.g * 0.587 + mat.emissive.b * 0.114
+                mat.emissive.setRGB(emissiveGray, emissiveGray, emissiveGray)
+              }
+              // Increase contrast slightly for better silhouette (StandardMaterial only)
+              if (mat instanceof THREE.MeshStandardMaterial) {
+                mat.roughness = Math.min(1, mat.roughness * 1.2)
+                mat.metalness = Math.max(0, mat.metalness * 0.8)
+              }
+            }
+          })
+        }
       }
       
       // Procurar ossos da cabeça e pescoço para o olhar interativo
@@ -130,11 +154,33 @@ const Character3D = ({ scrollProgress = 0 }: Character3DProps) => {
       idleAction.reset().fadeIn(0.5).play()
     }
     
+    // Pause animation when offscreen for performance
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (idleAction) {
+            if (entry.isIntersecting) {
+              idleAction.paused = false
+            } else {
+              idleAction.paused = true
+            }
+          }
+        })
+      },
+      { threshold: 0 }
+    )
+    
+    const heroElement = document.getElementById('hero')
+    if (heroElement) {
+      observer.observe(heroElement)
+    }
+    
     return () => {
       // Cleanup: stop animation on unmount
       if (idleAction) {
         idleAction.fadeOut(0.5).stop()
       }
+      observer.disconnect()
     }
   }, [actions])
 
