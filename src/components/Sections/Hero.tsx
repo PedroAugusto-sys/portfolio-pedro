@@ -374,7 +374,7 @@ const Hero = () => {
                   </span>
                 )}
               {!showNameAnimation && greeting && (
-                <span className="inline-block w-0.5 h-[0.9em] bg-blue-400 animate-pulse ml-1" />
+                <span className="inline-block w-0.5 h-[0.9em] bg-white animate-pulse ml-1" />
               )}
               </h1>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
@@ -447,7 +447,7 @@ const Hero = () => {
                 <Suspense 
                   fallback={
                     <div className="w-full h-full bg-gradient-to-br from-gray-900/10 to-gray-700/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
-                      <div className="text-sm text-blue-300/50">Carregando...</div>
+                      <div className="text-sm text-gray-400/50">Carregando...</div>
                     </div>
                   }
                 >

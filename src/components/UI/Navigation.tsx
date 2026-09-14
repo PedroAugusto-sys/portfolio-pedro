@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { trackEvent } from '../../utils/analytics'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
+import LanguageToggle from './LanguageToggle'
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -94,10 +95,14 @@ const Navigation = () => {
                   {item.label}
                 </button>
               ))}
+              <div className="ml-4">
+                <LanguageToggle />
+              </div>
             </div>
           </div>
 
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"

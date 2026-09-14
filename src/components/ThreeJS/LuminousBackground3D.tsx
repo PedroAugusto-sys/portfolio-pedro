@@ -150,13 +150,13 @@ const LuminousBackground3D = () => {
 
   return (
     <>
-      {/* Large background glow sphere 1 - Blue to Purple - CLOSER AND BIGGER */}
+      {/* Large background glow sphere 1 - White/Gray luminous - CLOSER AND BIGGER */}
       <mesh ref={mesh1Ref} position={[-6, 2, -10]} scale={[18, 18, 18]}>
         <sphereGeometry args={[1, 32, 32]} />
         <primitive object={shaderMaterial} attach="material" />
       </mesh>
 
-      {/* Large background glow sphere 2 - Purple to Magenta - CLOSER AND BIGGER */}
+      {/* Large background glow sphere 2 - White/Gray luminous - CLOSER AND BIGGER */}
       <mesh ref={mesh2Ref} position={[5, -1, -12]} scale={[20, 20, 20]}>
         <sphereGeometry args={[1, 32, 32]} />
         <primitive object={shaderMaterial2} attach="material" />
